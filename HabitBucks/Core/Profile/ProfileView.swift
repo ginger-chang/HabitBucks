@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var coinManager: CoinManager
     
     var body: some View {
         if let user = viewModel.currentUser {
@@ -66,6 +67,23 @@ struct ProfileView: View {
                                         tintColor: Color(.red))
                     }
                 }
+                // MARK: this is just a quick preview/test
+                Section("Coins") {
+                    Button {
+                        coinManager.addCoins(n: 5)
+                    } label: {
+                        Text("add 5")
+                    }
+                    Button {
+                        coinManager.minusCoins(n: 3)
+                    } label: {
+                        Text("minus 3")
+                    }
+                    Text("\(coinManager.coins)")
+                }
+            }
+            .task {
+                await coinManager.setupSubscription()
             }
         }
     }

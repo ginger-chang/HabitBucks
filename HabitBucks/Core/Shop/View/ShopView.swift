@@ -33,17 +33,11 @@ struct ShopView: View {
                 LazyVStack(alignment: .leading, spacing: 10) {
                     ForEach(0..<shopItemList.count, id: \.self) { index in
                         if index % 2 == 0 {
-                            // Start a new row with HStack
                             HStack {
-                                ShopItemView(name: shopItemList[index].name,
-                                             price: shopItemList[index].price,
-                                             emoji: shopItemList[index].emoji)
+                                ShopItemView(item: shopItemList[index])
                                 Spacer()
-                                // Check if there's another product for the second card in the row
                                 if index + 1 < shopItemList.count {
-                                    ShopItemView(name: shopItemList[index + 1].name,
-                                                 price: shopItemList[index + 1].price,
-                                                 emoji: shopItemList[index + 1].emoji)
+                                    ShopItemView(item: shopItemList[index + 1])
                                 }
                             }
                         }

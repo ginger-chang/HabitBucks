@@ -20,9 +20,10 @@ class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     
+    static let shared = AuthViewModel()
+    
     init() {
         self.userSession = Auth.auth().currentUser
-        
         Task {
             await fetchUser()
         }
@@ -45,6 +46,7 @@ class AuthViewModel: ObservableObject {
             let user = User(id: result.user.uid, username: username, email: email)
             let encodedUser = try Firestore.Encoder().encode(user)
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+            // TODO: setup other databases - call helper functions (shop, tasks, pomodoro, coins, etc.)
             await fetchUser()
         } catch {
             print("DEBUG: failed to create user with error \(error.localizedDescription)")

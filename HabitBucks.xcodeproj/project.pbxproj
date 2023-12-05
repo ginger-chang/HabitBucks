@@ -29,6 +29,9 @@
 		D2DC07C82B1E901B0038DBFC /* ShopItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07C72B1E901B0038DBFC /* ShopItem.swift */; };
 		D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07CC2B1E91610038DBFC /* ShopView.swift */; };
 		D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07CE2B1E92600038DBFC /* ShopItemView.swift */; };
+		D2DC07D12B1EDFF50038DBFC /* ShopViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07D02B1EDFF50038DBFC /* ShopViewModel.swift */; };
+		D2DC07D32B1EEA3B0038DBFC /* CoinManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07D22B1EEA3B0038DBFC /* CoinManager.swift */; };
+		D2DC07D52B1EEF930038DBFC /* Coin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07D42B1EEF930038DBFC /* Coin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +73,9 @@
 		D2DC07C72B1E901B0038DBFC /* ShopItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItem.swift; sourceTree = "<group>"; };
 		D2DC07CC2B1E91610038DBFC /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
 		D2DC07CE2B1E92600038DBFC /* ShopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItemView.swift; sourceTree = "<group>"; };
+		D2DC07D02B1EDFF50038DBFC /* ShopViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopViewModel.swift; sourceTree = "<group>"; };
+		D2DC07D22B1EEA3B0038DBFC /* CoinManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinManager.swift; sourceTree = "<group>"; };
+		D2DC07D42B1EEF930038DBFC /* Coin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +187,7 @@
 		D2DC07A72B1D908F0038DBFC /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D2DC07D22B1EEA3B0038DBFC /* CoinManager.swift */,
 				D2DC07C92B1E91470038DBFC /* Shop */,
 				D2DC07AA2B1D90E60038DBFC /* Authentication */,
 				D2DC07AB2B1D90EC0038DBFC /* Profile */,
@@ -194,6 +201,7 @@
 			children = (
 				D2DC07B62B1DA0710038DBFC /* User.swift */,
 				D2DC07C72B1E901B0038DBFC /* ShopItem.swift */,
+				D2DC07D42B1EEF930038DBFC /* Coin.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -260,6 +268,7 @@
 		D2DC07CB2B1E91540038DBFC /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				D2DC07D02B1EDFF50038DBFC /* ShopViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -404,13 +413,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2DC07D32B1EEA3B0038DBFC /* CoinManager.swift in Sources */,
 				D2DC07AD2B1D91300038DBFC /* LoginView.swift in Sources */,
 				D2DC07AF2B1D936E0038DBFC /* InputView.swift in Sources */,
+				D2DC07D52B1EEF930038DBFC /* Coin.swift in Sources */,
 				D2DC07C82B1E901B0038DBFC /* ShopItem.swift in Sources */,
 				D2DC077E2B1D8FA90038DBFC /* ContentView.swift in Sources */,
 				D2DC077C2B1D8FA90038DBFC /* HabitBucksApp.swift in Sources */,
 				D2DC07B72B1DA0710038DBFC /* User.swift in Sources */,
 				D2DC07B32B1D9BDC0038DBFC /* ProfileView.swift in Sources */,
+				D2DC07D12B1EDFF50038DBFC /* ShopViewModel.swift in Sources */,
 				D2DC07B12B1D99920038DBFC /* RegistrationView.swift in Sources */,
 				D2DC07B52B1D9E010038DBFC /* SettingsRowView.swift in Sources */,
 				D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */,
