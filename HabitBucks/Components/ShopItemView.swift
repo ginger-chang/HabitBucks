@@ -19,7 +19,7 @@ struct ShopItemView: View {
                 Text(item.emoji)
                     //.foregroundColor(.white)
                     .fontWeight(.semibold)
-                    .font(.system(size: 38))
+                    .font(.system(size: 37))
                     
                 
                 VStack(alignment: .leading, spacing: 4) {

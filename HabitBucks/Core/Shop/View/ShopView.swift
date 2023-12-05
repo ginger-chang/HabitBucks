@@ -8,14 +8,22 @@
 import SwiftUI
 
 struct ShopView: View {
+    @EnvironmentObject var coinManager: CoinManager
+    
     let shopItemList = [ShopItem.MOCK_SHOP_ITEM_1, ShopItem.MOCK_SHOP_ITEM_2, ShopItem.MOCK_SHOP_ITEM_3, ShopItem.MOCK_SHOP_ITEM_4, ShopItem.MOCK_SHOP_ITEM_5, ShopItem.MOCK_SHOP_ITEM_6, ShopItem.MOCK_SHOP_ITEM_7]
     
     var body: some View {
         VStack {
             // heading (text + plus sign)
-            HStack {
+            HStack(spacing: 4) {
                 Text("Shop")
                     .font(.system(size: 27))
+                Image(systemName: "dollarsign.circle.fill")
+                    .imageScale(.medium)
+                    .foregroundColor(.blue)
+                    .padding(.top, 4)
+                Text("\(coinManager.coins)")
+                    .padding(.top, 4)
                 Spacer()
                 Button {
                     print("add new shop item")
@@ -46,19 +54,14 @@ struct ShopView: View {
                 .padding()
             }
             
-            
-            Spacer()
-            
-            // (bottom nav bar?)
-            Text("...navbar...")
         }
-        
-        
+        .padding(.top, 15)
     }
 }
 
 struct ShopView_Previews: PreviewProvider {
     static var previews: some View {
         ShopView()
+            .environmentObject(CoinManager())
     }
 }
