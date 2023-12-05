@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
+    @EnvironmentObject var coinManager: CoinManager
     @State private var selectedTab = 2 // set default to task list
 
     var body: some View {
@@ -65,6 +66,7 @@ struct ContentView_Previews: PreviewProvider {
         ZStack {
             ContentView()
                 .environmentObject(AuthViewModel())
+                .environmentObject(CoinManager())
         }
     }
 }

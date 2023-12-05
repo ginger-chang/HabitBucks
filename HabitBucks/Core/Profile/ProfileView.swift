@@ -83,7 +83,7 @@ struct ProfileView: View {
                 }
             }
             .task {
-                await coinManager.setupSubscription()
+                await CoinManager.shared.setupSubscription()
             }
         }
     }

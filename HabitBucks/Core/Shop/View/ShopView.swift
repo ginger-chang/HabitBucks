@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ShopView: View {
     @EnvironmentObject var coinManager: CoinManager
+    @EnvironmentObject var shopViewModel: ShopViewModel
     
     let shopItemList = [ShopItem.MOCK_SHOP_ITEM_1, ShopItem.MOCK_SHOP_ITEM_2, ShopItem.MOCK_SHOP_ITEM_3, ShopItem.MOCK_SHOP_ITEM_4, ShopItem.MOCK_SHOP_ITEM_5, ShopItem.MOCK_SHOP_ITEM_6, ShopItem.MOCK_SHOP_ITEM_7]
     
@@ -63,5 +64,6 @@ struct ShopView_Previews: PreviewProvider {
     static var previews: some View {
         ShopView()
             .environmentObject(CoinManager())
+            .environmentObject(ShopViewModel())
     }
 }
