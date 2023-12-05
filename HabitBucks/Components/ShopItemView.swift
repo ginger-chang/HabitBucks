@@ -15,7 +15,6 @@ struct ShopItemView: View {
     var body: some View {
         // TODO: 3D touch for edit & delete
         
-        // TODO: add button logic in viewmodel
         Button {
             print("click item \(item.name)")
             shopViewModel.clickBuyItem(item: item)
@@ -46,10 +45,12 @@ struct ShopItemView: View {
                 }
             }
         }
+        // button presentation
         .buttonStyle(PlainButtonStyle())
         .frame(width: UIScreen.main.bounds.width * 0.45, height: 72)
         .background(Color(.systemGray5))
         .cornerRadius(10)
+        // alert when clicking button
         .alert(isPresented: $shopViewModel.showAlert) {
             if shopViewModel.sufficientAlert {
                 print("70 \(self.item.name) \(self.item.price)")
@@ -57,8 +58,16 @@ struct ShopItemView: View {
             } else if shopViewModel.insufficientAlert {
                 return shopViewModel.constructInsufficientAlert()
             } else {
-                // Default empty alert
                 return Alert(title: Text(""))
+            }
+        }
+        // context menu for edit & delete
+        .contextMenu {
+            Button("Edit") {
+                print("Edit \(item.name)")
+            }
+            Button("Delete") {
+                print("Delete \(item.name)")
             }
         }
         

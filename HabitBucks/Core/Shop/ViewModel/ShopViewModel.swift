@@ -30,7 +30,6 @@ class ShopViewModel: ObservableObject {
         
     }
     
-    // TODO: buyItem()'s function when shopitem is clicked - throw notification to confirm, then if thing is bought, update coins
     func clickBuyItem(item: ShopItem) {
         let curCoins = CoinManager.shared.coins
         let price = item.price
