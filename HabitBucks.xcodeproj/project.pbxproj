@@ -26,6 +26,9 @@
 		D2DC07C02B1DA7F10038DBFC /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D2DC07BF2B1DA7F10038DBFC /* FirebaseFirestoreSwift */; };
 		D2DC07C22B1DA7F10038DBFC /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = D2DC07C12B1DA7F10038DBFC /* FirebaseStorage */; };
 		D2DC07C62B1DA8470038DBFC /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07C52B1DA8470038DBFC /* AuthViewModel.swift */; };
+		D2DC07C82B1E901B0038DBFC /* ShopItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07C72B1E901B0038DBFC /* ShopItem.swift */; };
+		D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07CC2B1E91610038DBFC /* ShopView.swift */; };
+		D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07CE2B1E92600038DBFC /* ShopItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,9 @@
 		D2DC07B62B1DA0710038DBFC /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D2DC07B82B1DA6410038DBFC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "HabitBucks/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		D2DC07C52B1DA8470038DBFC /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		D2DC07C72B1E901B0038DBFC /* ShopItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItem.swift; sourceTree = "<group>"; };
+		D2DC07CC2B1E91610038DBFC /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
+		D2DC07CE2B1E92600038DBFC /* ShopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +173,7 @@
 			children = (
 				D2DC07AE2B1D936E0038DBFC /* InputView.swift */,
 				D2DC07B42B1D9E010038DBFC /* SettingsRowView.swift */,
+				D2DC07CE2B1E92600038DBFC /* ShopItemView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -174,6 +181,7 @@
 		D2DC07A72B1D908F0038DBFC /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D2DC07C92B1E91470038DBFC /* Shop */,
 				D2DC07AA2B1D90E60038DBFC /* Authentication */,
 				D2DC07AB2B1D90EC0038DBFC /* Profile */,
 				D2DC07A92B1D90C90038DBFC /* Root */,
@@ -185,6 +193,7 @@
 			isa = PBXGroup;
 			children = (
 				D2DC07B62B1DA0710038DBFC /* User.swift */,
+				D2DC07C72B1E901B0038DBFC /* ShopItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -227,6 +236,30 @@
 			isa = PBXGroup;
 			children = (
 				D2DC07C52B1DA8470038DBFC /* AuthViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		D2DC07C92B1E91470038DBFC /* Shop */ = {
+			isa = PBXGroup;
+			children = (
+				D2DC07CB2B1E91540038DBFC /* ViewModel */,
+				D2DC07CA2B1E91500038DBFC /* View */,
+			);
+			path = Shop;
+			sourceTree = "<group>";
+		};
+		D2DC07CA2B1E91500038DBFC /* View */ = {
+			isa = PBXGroup;
+			children = (
+				D2DC07CC2B1E91610038DBFC /* ShopView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		D2DC07CB2B1E91540038DBFC /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -373,12 +406,15 @@
 			files = (
 				D2DC07AD2B1D91300038DBFC /* LoginView.swift in Sources */,
 				D2DC07AF2B1D936E0038DBFC /* InputView.swift in Sources */,
+				D2DC07C82B1E901B0038DBFC /* ShopItem.swift in Sources */,
 				D2DC077E2B1D8FA90038DBFC /* ContentView.swift in Sources */,
 				D2DC077C2B1D8FA90038DBFC /* HabitBucksApp.swift in Sources */,
 				D2DC07B72B1DA0710038DBFC /* User.swift in Sources */,
 				D2DC07B32B1D9BDC0038DBFC /* ProfileView.swift in Sources */,
 				D2DC07B12B1D99920038DBFC /* RegistrationView.swift in Sources */,
 				D2DC07B52B1D9E010038DBFC /* SettingsRowView.swift in Sources */,
+				D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */,
+				D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */,
 				D2DC07C62B1DA8470038DBFC /* AuthViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
