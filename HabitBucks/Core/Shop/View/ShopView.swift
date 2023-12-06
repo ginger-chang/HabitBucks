@@ -14,62 +14,64 @@ struct ShopView: View {
     
     
     var body: some View {
-        VStack {
-            // heading (text + plus sign)
-            HStack(spacing: 4) {
-                Text("Shop")
-                    .font(.system(size: 27))
-                Image(systemName: "dollarsign.circle.fill")
-                    .imageScale(.medium)
-                    .foregroundColor(.blue)
-                    .padding(.top, 4)
-                Text("\(coinManager.coins)")
-                    .padding(.top, 4)
-                Spacer()
-                Button {
-                    print("add new shop item")
-                } label: {
-                    Image(systemName: "plus.square")
-                        .font(.system(size: 24))
+        NavigationView {
+            VStack {
+                // heading (text + plus sign)
+                HStack(spacing: 4) {
+                    Text("Shop")
+                        .font(.system(size: 27))
+                    Image(systemName: "dollarsign.circle.fill")
+                        .imageScale(.medium)
                         .foregroundColor(.blue)
-                        .imageScale(.large)
+                        .padding(.top, 4)
+                    Text("\(coinManager.coins)")
+                        .padding(.top, 4)
+                    Spacer()
+                    NavigationLink {
+                        AddShopItemView()
+                    } label: {
+                        Image(systemName: "plus.square")
+                            .font(.system(size: 24))
+                            .foregroundColor(.blue)
+                            .imageScale(.large)
+                    }
                 }
-            }
-            .padding(.horizontal)
-            
-            // MARK: shop item list
-            if let shopItemList = shopViewModel.shopItemList {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 10) {
-                        ForEach(0..<shopItemList.count, id: \.self) { index in
-                            if index % 2 == 0 {
-                                HStack {
-                                    ShopItemView(item: shopItemList[index])
-                                    Spacer()
-                                    if index + 1 < shopItemList.count {
-                                        ShopItemView(item: shopItemList[index + 1])
+                .padding(.horizontal)
+                
+                // MARK: shop item list
+                if let shopItemList = shopViewModel.shopItemList {
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 10) {
+                            ForEach(0..<shopItemList.count, id: \.self) { index in
+                                if index % 2 == 0 {
+                                    HStack {
+                                        ShopItemView(item: shopItemList[index])
+                                        Spacer()
+                                        if index + 1 < shopItemList.count {
+                                            ShopItemView(item: shopItemList[index + 1])
+                                        }
                                     }
                                 }
                             }
                         }
+                        .padding()
                     }
-                    .padding()
-                }
-                // alert when clicking button
-                .alert(isPresented: $shopViewModel.showAlert) {
-                    if shopViewModel.sufficientAlert {
-                        return shopViewModel.constructSufficientAlert()
-                    } else if shopViewModel.insufficientAlert {
-                        return shopViewModel.constructInsufficientAlert()
-                    } else {
-                        return Alert(title: Text(""))
+                    // alert when clicking button
+                    .alert(isPresented: $shopViewModel.showAlert) {
+                        if shopViewModel.sufficientAlert {
+                            return shopViewModel.constructSufficientAlert()
+                        } else if shopViewModel.insufficientAlert {
+                            return shopViewModel.constructInsufficientAlert()
+                        } else {
+                            return Alert(title: Text(""))
+                        }
                     }
                 }
+                
+                
             }
-            
-            
+            .padding(.top, 15)
         }
-        .padding(.top, 15)
     }
 }
 

@@ -73,7 +73,6 @@ struct LoginView: View {
                     }
                     .font(.system(size: 14))
                 }
-
             }
         }
     }

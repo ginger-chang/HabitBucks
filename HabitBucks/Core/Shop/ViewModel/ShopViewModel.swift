@@ -135,7 +135,7 @@ class ShopViewModel: ObservableObject {
                 }
             } else {
                 // Document does not exist
-                print("DEBUG: shop view model fetch shop item doesn't exits")
+                print("DEBUG: fetch shop item user shop doesn't exist")
             }
         }
     }
