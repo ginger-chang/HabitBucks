@@ -15,53 +15,55 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if viewModel.userSession != nil && viewModel.currentUser != nil {
-                TabView(selection: $selectedTab) {
-                    AnalysisView()
-                        .tabItem {
-                            Image(systemName: "chart.pie.fill")
-                            Text("Analysis")
-                        }
-                        .tag(0)
-                    
-                    PomodoroView()
-                        .tabItem {
-                            Image(systemName: "timer")
-                            Text("Pomodoro")
-                        }
-                        .tag(1)
-                    
-                    TaskView()
-                        .tabItem {
-                            Image(systemName: "list.clipboard")
-                            Text("Tasks")
-                        }
-                        .tag(2)
-                    
-                    ShopView()
-                        .tabItem {
-                            Image(systemName: "cart")
-                            Text("Shop")
-                        }
-                        .tag(3)
-                    
-                    ProfileView()
-                        .tabItem {
-                            Image(systemName: "person.crop.circle.fill")
-                            Text("Profile")
-                        }
-                        .tag(4)
+            if viewModel.isLoading {
+                LoadingView()
+            } else {
+                if viewModel.userSession != nil && viewModel.currentUser != nil {
+                    TabView(selection: $selectedTab) {
+                        AnalysisView()
+                            .tabItem {
+                                Image(systemName: "chart.pie.fill")
+                                Text("Analysis")
+                            }
+                            .tag(0)
+                        
+                        PomodoroView()
+                            .tabItem {
+                                Image(systemName: "timer")
+                                Text("Pomodoro")
+                            }
+                            .tag(1)
+                        
+                        TaskView()
+                            .tabItem {
+                                Image(systemName: "list.clipboard")
+                                Text("Tasks")
+                            }
+                            .tag(2)
+                        
+                        ShopView()
+                            .tabItem {
+                                Image(systemName: "cart")
+                                Text("Shop")
+                            }
+                            .tag(3)
+                        
+                        ProfileView()
+                            .tabItem {
+                                Image(systemName: "person.crop.circle.fill")
+                                Text("Profile")
+                            }
+                            .tag(4)
 
-                    // Add more tabs as needed
+                        // Add more tabs as needed
+                    }
+                    .edgesIgnoringSafeArea(.top)
+                    .task {
+                        await CoinManager.shared.setupSubscription()
+                    }
+                } else {
+                    LoginView()
                 }
-                .edgesIgnoringSafeArea(.top)
-                .task {
-                    await CoinManager.shared.setupSubscription()
-                }
-            } else if viewModel.userSession != nil {
-                LoginView()
-            } else { // still loading
-                
             }
         }
     }

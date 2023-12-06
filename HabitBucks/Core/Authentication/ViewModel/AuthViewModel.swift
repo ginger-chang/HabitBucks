@@ -19,10 +19,12 @@ protocol AuthenticationFormProtocol {
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
+    @Published var isLoading = true
     
     static let shared = AuthViewModel()
     
     init() {
+        print("loading is true")
         self.userSession = Auth.auth().currentUser
         Task {
             await fetchUser()
@@ -58,6 +60,7 @@ class AuthViewModel: ObservableObject {
             try Auth.auth().signOut()
             self.userSession = nil // automatically takes us back to login view (b/c userSession is @Published)
             self.currentUser = nil
+            self.isLoading = false // VERY WEIRD LOGIC
         } catch {
             print("DEBUG: failed to sign out with error \(error.localizedDescription)")
         }
@@ -68,10 +71,17 @@ class AuthViewModel: ObservableObject {
     }
     
     func fetchUser() async {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        guard let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument() else { return }
+        self.isLoading = true
+        guard let uid = Auth.auth().currentUser?.uid else {
+            self.isLoading = false
+            return
+        }
+        guard let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument() else {
+            self.isLoading = false
+            return
+        }
         self.currentUser = try? snapshot.data(as: User.self)
-     
+        self.isLoading = false
         print("DEBUG: current user is \(self.currentUser)")
     }
 }
