@@ -12,6 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var coinManager: CoinManager
     @State private var selectedTab = 2 // set default to task list
     // TODO: if i set this to profile what will happen?? breaks still...
+    private var contentViewLoading = true
 
     var body: some View {
         Group {
@@ -60,6 +61,7 @@ struct ContentView: View {
                     .edgesIgnoringSafeArea(.top)
                     .task {
                         await CoinManager.shared.setupSubscription()
+                        // TODO: add more fetch stuff here!?
                     }
                 } else {
                     LoginView()
