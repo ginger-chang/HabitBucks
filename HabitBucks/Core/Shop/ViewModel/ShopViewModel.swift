@@ -36,7 +36,6 @@ class ShopViewModel: ObservableObject {
     func createShop() async {
         // creating shop items
         var shopItemArray: [String] = []
-        var newShopItemList: [ShopItem] = []
         do {
             let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
             let id2 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_2)
@@ -44,9 +43,6 @@ class ShopViewModel: ObservableObject {
             shopItemArray.append(id1)
             shopItemArray.append(id2)
             shopItemArray.append(id3)
-            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1)
-            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2)
-            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3)
         } catch {
             print("DEBUG: createShopItems failed with error \(error.localizedDescription)")
         }
@@ -64,7 +60,13 @@ class ShopViewModel: ObservableObject {
                 print("DEBUG: Error adding user shop document: \(error)")
             }
         }
-        shopItemList = newShopItemList
+        DispatchQueue.main.async {
+            var newShopItemList: [ShopItem] = []
+            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1)
+            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2)
+            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3)
+            self.shopItemList = newShopItemList
+        }
     }
     
     func asyncSetup() {
