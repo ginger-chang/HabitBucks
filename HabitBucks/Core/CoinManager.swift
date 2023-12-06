@@ -38,6 +38,7 @@ class CoinManager: ObservableObject {
         updateFirestore()
     }
     
+    // when total coin is updated
     private func updateFirestore() {
         if self.uid == "" {
             guard case let self.uid = Auth.auth().currentUser?.uid else {

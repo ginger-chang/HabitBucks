@@ -54,7 +54,7 @@ class AuthViewModel: ObservableObject {
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
             await fetchUser()
             // TODO: setup other databases - call helper functions (shop, tasks, pomodoro, coins, etc.)
-            await ShopViewModel.shared.createShop()
+            //await ShopViewModel.shared.createShop()
         } catch {
             print("DEBUG: failed to create user with error \(error.localizedDescription)")
         }

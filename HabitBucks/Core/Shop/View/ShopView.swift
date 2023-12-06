@@ -58,7 +58,6 @@ struct ShopView: View {
                 // alert when clicking button
                 .alert(isPresented: $shopViewModel.showAlert) {
                     if shopViewModel.sufficientAlert {
-                        print("70")
                         return shopViewModel.constructSufficientAlert()
                     } else if shopViewModel.insufficientAlert {
                         return shopViewModel.constructInsufficientAlert()

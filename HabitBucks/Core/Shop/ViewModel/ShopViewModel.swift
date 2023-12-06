@@ -11,6 +11,7 @@ import FirebaseCore
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 import SwiftUI
+import Combine
 
 class ShopViewModel: ObservableObject {
     //@Published var
@@ -23,6 +24,7 @@ class ShopViewModel: ObservableObject {
     private var uid: String
     static let shared = ShopViewModel()
     var latestShopItem: ShopItem
+    private var cancellables: Set<AnyCancellable> = []
     
     // TODO: (?) init() function called when user is created, store default shopItem in it
     // do it like the way coin manager is set up (with another set subscription function - perhaps)
@@ -35,6 +37,7 @@ class ShopViewModel: ObservableObject {
     // This is called only when the user creates an account & need to set up documents
     func createShop() async {
         // creating shop items
+        print("create shop is called")
         var shopItemArray: [String] = []
         do {
             let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
@@ -49,10 +52,6 @@ class ShopViewModel: ObservableObject {
         print("shopitem arr: \(shopItemArray)")
         
         // creating user shop
-        guard let uid = await AuthViewModel.shared.currentUser?.id else {
-            print("DEBUG: create shop doesn't get uid")
-            return
-        }
         db.collection("user_shop").document(uid).setData([
             "shop_item_list": shopItemArray,
         ]) { error in
@@ -69,50 +68,78 @@ class ShopViewModel: ObservableObject {
         }
     }
     
-    func asyncSetup() {
-        
-    }
-    
-    // gets the uid and retrieve shopItemList from firestore
-    func fetchShopItemList() async {
-        // get uid & user shop
-        guard let uid = await AuthViewModel.shared.currentUser?.id else {
-            print("DEBUG: create shop doesn't get uid")
-            return
-        }
-        var shopItemStrArr: [String]
-        /*
-        let documentReference = db.collection("user_shop").document(uid)
+    func asyncSetup() async {
+        // setup subscription to uid
+        await AuthViewModel.shared.$currentUser
+            .sink { [weak self] newUser in
+                self?.uid = newUser?.id ?? ""
+            }
+            .store(in: &cancellables)
+        // check if document doesn't exist, create one
+        let collection = db.collection("user_shop")
+        print("right before... self uid is \(self.uid)")
+        let documentReference = collection.document(self.uid)
         documentReference.getDocument { (document, error) in
             if let error = error {
-                print("DEBUG: failed to fetch user shop doc with error \(error.localizedDescription)")
+                print("DEBUG: failed to fetch user_shop doc with error \(error.localizedDescription)")
             } else {
                 // Check if the document exists
                 if let document = document, document.exists {
                     // Document exists -> update coins field (and view)
-                    if let arr = document.get("shop_item_list") {
-                        shopItemStrArr = arr as! [String]
+                    Task {
+                        await self.fetchShopItemList()
                     }
-                } // CHECK: do i need a if doc doesn't exist else statement?
+                } else {
+                    // Document does not exist -> create new shop
+                    Task {
+                        print("calling create shop from async setup b/c uid is \(self.uid)")
+                        await self.createShop()
+                    }
+                }
             }
-        }*/
-        /*
-        // get shop items
-        var curShopItemList: [ShopItem]
-        var shopItem: ShopItem?
-        var errorShopItem = ShopItem(name: "ERROR", price: 0, emoji: "❌")
-        for shopItemId in shopItemStrArr {
-            guard let snapshot = try? await Firestore.firestore().collection("user_shop").document(shopItemId).getDocument() else {
-                return
-            }
-            //shopItem = try? snapshot.data(as: ShopItem.self)
-            curShopItemList.append(shopItem ?? errorShopItem)
         }
-         */
-        //DispatchQueue.main.async {
-        //self.shopItemList = curShopItemList
-        //}
     }
+    
+    // update the self.shopItemList variable based on database
+    func fetchShopItemList() async {
+        print("fetch shop item list")
+        let docRef = self.db.collection("user_shop").document(self.uid)
+        docRef.getDocument { (document, error) in
+            if let error = error {
+                print("DEBUG: shop view model fetch shop item list failed \(error.localizedDescription)")
+            } else if let document = document, document.exists {
+                Task {
+                    let shopItemStrArr = document.get("shop_item_list") as? [String]
+                    print("user_shop exists, str arr is \(shopItemStrArr)")
+                    var newShopItemList: [ShopItem] = []
+                    for shopItemId in shopItemStrArr ?? [] {
+                        print("shop item id is \(shopItemId)")
+                        let shopItemDocRef = self.db.collection("shop_items").document(shopItemId)
+                        try await shopItemDocRef.getDocument { (doc, error) in
+                            if let error = error {
+                                print("DEBUG: fetch shop item list failed - can't get item \(error.localizedDescription)")
+                            } else if let doc = doc, doc.exists {
+                                let itemName = doc.get("name") as? String ?? "Error"
+                                let itemPrice = doc.get("price") as? Int ?? 0
+                                let itemEmoji = doc.get("emoji") as? String ?? "❌"
+                                let item = ShopItem(name: itemName, price: itemPrice, emoji: itemEmoji)
+                                print("item is \(item)")
+                                newShopItemList.append(item)
+                                self.shopItemList = newShopItemList
+                                print("now new shop item list is \(newShopItemList)")
+                            } else {
+                                print("DEBUG: fetch shop item doesn't exist")
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Document does not exist
+                print("DEBUG: shop view model fetch shop item doesn't exits")
+            }
+        }
+    }
+       
     
     func clickBuyItem(item: ShopItem) {
         let curCoins = CoinManager.shared.coins
