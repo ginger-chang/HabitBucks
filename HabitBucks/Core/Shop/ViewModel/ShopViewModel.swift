@@ -17,16 +17,22 @@ class ShopViewModel: ObservableObject {
     @Published var showAlert = false
     @Published var sufficientAlert = false
     @Published var insufficientAlert = false
-    var latestShopItem: ShopItem
+    @Published var shopItemList: [ShopItem]?
     static let shared = ShopViewModel()
+    var latestShopItem: ShopItem
     
     // TODO: (?) init() function called when user is created, store default shopItem in it
     // do it like the way coin manager is set up (with another set subscription function - perhaps)
     init() {
         latestShopItem = ShopItem(name: "default", price: 0, emoji: "😀")
+        shopItemList = [ShopItem.MOCK_SHOP_ITEM_1, ShopItem.MOCK_SHOP_ITEM_2, ShopItem.MOCK_SHOP_ITEM_3, ShopItem.MOCK_SHOP_ITEM_4, ShopItem.MOCK_SHOP_ITEM_5, ShopItem.MOCK_SHOP_ITEM_6, ShopItem.MOCK_SHOP_ITEM_7]
     }
     
     func asyncSetup() {
+        
+    }
+    
+    func fetchShopItemList() {
         
     }
     

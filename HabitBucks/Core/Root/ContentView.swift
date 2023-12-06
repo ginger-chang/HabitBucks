@@ -11,6 +11,7 @@ struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @EnvironmentObject var coinManager: CoinManager
     @State private var selectedTab = 2 // set default to task list
+    // TODO: if i set this to profile what will happen??
 
     var body: some View {
         Group {

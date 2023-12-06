@@ -16,11 +16,11 @@ struct LoginView: View {
         NavigationStack {
             VStack {
                 // icon
-                Image("icon")
+                Image("banner")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 120, height: 120)
-                    .padding(.vertical, 32)
+                    .frame(height: 120)
+                    .padding(.vertical, 50)
                 
                 // input fields
                 VStack(spacing: 24) {

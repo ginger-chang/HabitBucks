@@ -11,7 +11,7 @@ struct ShopView: View {
     @EnvironmentObject var coinManager: CoinManager
     @EnvironmentObject var shopViewModel: ShopViewModel
     
-    let shopItemList = [ShopItem.MOCK_SHOP_ITEM_1, ShopItem.MOCK_SHOP_ITEM_2, ShopItem.MOCK_SHOP_ITEM_3, ShopItem.MOCK_SHOP_ITEM_4, ShopItem.MOCK_SHOP_ITEM_5, ShopItem.MOCK_SHOP_ITEM_6, ShopItem.MOCK_SHOP_ITEM_7]
+    
     
     var body: some View {
         VStack {
@@ -38,22 +38,25 @@ struct ShopView: View {
             .padding(.horizontal)
             
             // MARK: shop item list
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 10) {
-                    ForEach(0..<shopItemList.count, id: \.self) { index in
-                        if index % 2 == 0 {
-                            HStack {
-                                ShopItemView(item: shopItemList[index])
-                                Spacer()
-                                if index + 1 < shopItemList.count {
-                                    ShopItemView(item: shopItemList[index + 1])
+            if let shopItemList = shopViewModel.shopItemList {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 10) {
+                        ForEach(0..<shopItemList.count, id: \.self) { index in
+                            if index % 2 == 0 {
+                                HStack {
+                                    ShopItemView(item: shopItemList[index])
+                                    Spacer()
+                                    if index + 1 < shopItemList.count {
+                                        ShopItemView(item: shopItemList[index + 1])
+                                    }
                                 }
                             }
                         }
                     }
+                    .padding()
                 }
-                .padding()
             }
+            
             
         }
         .padding(.top, 15)

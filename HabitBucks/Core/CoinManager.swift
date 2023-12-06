@@ -66,7 +66,6 @@ class CoinManager: ObservableObject {
         
     }
     
-    // TODO: when should this be called?
     // This is called every time profile view is set up
     // Sets up subscription, add new document if needed, else update the "coins" field according what is in the database
     func setupSubscription() async {
