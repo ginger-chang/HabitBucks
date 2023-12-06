@@ -164,6 +164,28 @@ class ShopViewModel: ObservableObject {
     }
  
     // TODO: addShopItem() function to add another shopItem to the database & update view
+    func addShopItem(item: ShopItem) async {
+        print("add shop item called in shop view model \(item)")
+        // 1st step: update local self.shopItemList
+        if var unwrappedList = self.shopItemList {
+            unwrappedList.append(item)
+            shopItemList = unwrappedList
+        } else {
+            shopItemList = [item]
+        }
+        // 2nd step: add doc in shop_items
+        do {
+            let itemId = try await storeShopItemToFirestore(item: item)
+            // 3rd step: append the new shop item id to user_shop
+            let docRef = self.db.collection("user_shop").document(self.uid)
+            try await docRef.updateData([
+                "shop_item_list": FieldValue.arrayUnion([itemId])
+            ])
+        } catch {
+            print("DEBUG: fail to update firestore when adding new shop item \(error.localizedDescription)")
+        }
+        
+    }
     
     // TODO: editShopItem()
     

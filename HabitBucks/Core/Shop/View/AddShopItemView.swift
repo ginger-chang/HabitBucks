@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AddShopItemView: View {
+    @EnvironmentObject var shopViewModel: ShopViewModel
+    @Environment(\.dismiss) var dismiss
     @State private var name = ""
     @State private var price = ""
     @State private var emoji = ""
@@ -39,7 +41,11 @@ struct AddShopItemView: View {
             .padding(.top, 12)
             
             Button {
-                print("add item")
+                let newItem = ShopItem(name: self.name, price: Int(self.price) ?? 0, emoji: self.emoji)
+                Task {
+                    await shopViewModel.addShopItem(item: newItem)
+                }
+                dismiss()
             } label: {
                 HStack {
                     Text("SAVE")
@@ -60,5 +66,6 @@ struct AddShopItemView: View {
 struct AddShopItemView_Previews: PreviewProvider {
     static var previews: some View {
         AddShopItemView()
+            .environmentObject(ShopViewModel())
     }
 }
