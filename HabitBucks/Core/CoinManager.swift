@@ -40,12 +40,15 @@ class CoinManager: ObservableObject {
     
     private func updateFirestore() {
         if self.uid == "" {
-            print("DEBUG: updating firestore but uid in coin manager is empty")
+            guard case let self.uid = Auth.auth().currentUser?.uid else {
+                print("Something went wrong wuwuwu \(self.uid)")
+                return
+            }
         }
+        print("update coin firestore, uid is \(self.uid)")
         // check if document doesn't exist, add another
         let collection = db.collection("coins")
         let documentReference = collection.document(self.uid)
-        
         documentReference.getDocument { (document, error) in
             if let error = error {
                 print("DEBUG: failed to fetch coin doc with error \(error.localizedDescription)")
@@ -66,6 +69,7 @@ class CoinManager: ObservableObject {
         
     }
     
+    // TODO: when should this be called?
     // This is called every time profile view is set up
     // Sets up subscription, add new document if needed, else update the "coins" field according what is in the database
     func setupSubscription() async {

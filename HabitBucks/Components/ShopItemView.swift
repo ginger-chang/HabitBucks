@@ -50,17 +50,6 @@ struct ShopItemView: View {
         .frame(width: UIScreen.main.bounds.width * 0.45, height: 72)
         .background(Color(.systemGray5))
         .cornerRadius(10)
-        // alert when clicking button
-        .alert(isPresented: $shopViewModel.showAlert) {
-            if shopViewModel.sufficientAlert {
-                print("70 \(self.item.name) \(self.item.price)")
-                return shopViewModel.constructSufficientAlert()
-            } else if shopViewModel.insufficientAlert {
-                return shopViewModel.constructInsufficientAlert()
-            } else {
-                return Alert(title: Text(""))
-            }
-        }
         // context menu for edit & delete
         .contextMenu {
             Button("Edit") {

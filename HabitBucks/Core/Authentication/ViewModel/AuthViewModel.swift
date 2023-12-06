@@ -31,6 +31,10 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func giveUid() -> String {
+        return self.currentUser?.id ?? ""
+    }
+    
     func signIn(withEmail email: String, password: String) async throws {
         do {
             let result = try await Auth.auth().signIn(withEmail: email, password: password)

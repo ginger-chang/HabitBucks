@@ -11,6 +11,10 @@ struct ShopItem: Codable {
     let name: String
     let price: Int
     let emoji: String
+    
+    static func == (lhs: ShopItem, rhs: ShopItem) -> Bool {
+        return lhs.name == rhs.name && lhs.price == rhs.price && lhs.emoji == rhs.emoji
+    }
 }
 
 extension ShopItem {

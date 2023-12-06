@@ -73,8 +73,45 @@ class ShopViewModel: ObservableObject {
         
     }
     
-    func fetchShopItemList() {
-        
+    // gets the uid and retrieve shopItemList from firestore
+    func fetchShopItemList() async {
+        // get uid & user shop
+        guard let uid = await AuthViewModel.shared.currentUser?.id else {
+            print("DEBUG: create shop doesn't get uid")
+            return
+        }
+        var shopItemStrArr: [String]
+        /*
+        let documentReference = db.collection("user_shop").document(uid)
+        documentReference.getDocument { (document, error) in
+            if let error = error {
+                print("DEBUG: failed to fetch user shop doc with error \(error.localizedDescription)")
+            } else {
+                // Check if the document exists
+                if let document = document, document.exists {
+                    // Document exists -> update coins field (and view)
+                    if let arr = document.get("shop_item_list") {
+                        shopItemStrArr = arr as! [String]
+                    }
+                } // CHECK: do i need a if doc doesn't exist else statement?
+            }
+        }*/
+        /*
+        // get shop items
+        var curShopItemList: [ShopItem]
+        var shopItem: ShopItem?
+        var errorShopItem = ShopItem(name: "ERROR", price: 0, emoji: "❌")
+        for shopItemId in shopItemStrArr {
+            guard let snapshot = try? await Firestore.firestore().collection("user_shop").document(shopItemId).getDocument() else {
+                return
+            }
+            //shopItem = try? snapshot.data(as: ShopItem.self)
+            curShopItemList.append(shopItem ?? errorShopItem)
+        }
+         */
+        //DispatchQueue.main.async {
+        //self.shopItemList = curShopItemList
+        //}
     }
     
     func clickBuyItem(item: ShopItem) {
