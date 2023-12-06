@@ -82,9 +82,6 @@ struct ProfileView: View {
                     Text("\(coinManager.coins)")
                 }
             }
-            .task {
-                await CoinManager.shared.setupSubscription()
-            }
         }
     }
 }

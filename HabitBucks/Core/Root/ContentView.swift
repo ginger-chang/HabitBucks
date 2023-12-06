@@ -11,11 +11,11 @@ struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @EnvironmentObject var coinManager: CoinManager
     @State private var selectedTab = 2 // set default to task list
-    // TODO: if i set this to profile what will happen??
+    // TODO: if i set this to profile what will happen?? breaks still...
 
     var body: some View {
         Group {
-            if viewModel.userSession != nil {
+            if viewModel.userSession != nil && viewModel.currentUser != nil {
                 TabView(selection: $selectedTab) {
                     AnalysisView()
                         .tabItem {
@@ -34,7 +34,7 @@ struct ContentView: View {
                     TaskView()
                         .tabItem {
                             Image(systemName: "list.clipboard")
-                            Text("Home")
+                            Text("Tasks")
                         }
                         .tag(2)
                     
@@ -55,8 +55,13 @@ struct ContentView: View {
                     // Add more tabs as needed
                 }
                 .edgesIgnoringSafeArea(.top)
-            } else {
+                .task {
+                    await CoinManager.shared.setupSubscription()
+                }
+            } else if viewModel.userSession != nil {
                 LoginView()
+            } else { // still loading
+                
             }
         }
     }
