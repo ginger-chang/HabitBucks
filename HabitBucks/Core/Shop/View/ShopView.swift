@@ -42,7 +42,7 @@ struct ShopView: View {
                 if let shopItemList = shopViewModel.shopItemList {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 10) {
-                            ForEach((0..<shopItemList.count), id: \.self) { index in
+                            ForEach(0..<shopItemList.count, id: \.self) { index in
                                 if index % 2 == 0 {
                                     HStack {
                                         ShopItemView(item: shopItemList[index])
@@ -72,6 +72,7 @@ struct ShopView: View {
             }
             .padding(.top, 15)
         }
+
     }
 }
 

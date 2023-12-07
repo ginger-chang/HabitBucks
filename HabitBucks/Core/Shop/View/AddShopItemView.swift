@@ -41,7 +41,7 @@ struct AddShopItemView: View {
             .padding(.top, 12)
             
             Button {
-                let newItem = ShopItem(name: self.name, price: Int(self.price) ?? 0, emoji: self.emoji)
+                let newItem = ShopItem(name: self.name, price: Int(self.price) ?? 0, emoji: self.emoji, createdTime: Date())
                 Task {
                     await shopViewModel.addShopItem(item: newItem)
                 }

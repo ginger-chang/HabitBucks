@@ -29,7 +29,7 @@ class ShopViewModel: ObservableObject {
     // TODO: (?) init() function called when user is created, store default shopItem in it
     // do it like the way coin manager is set up (with another set subscription function - perhaps)
     init() {
-        self.latestShopItem = ShopItem(name: "default", price: 0, emoji: "😀")
+        self.latestShopItem = ShopItem(name: "default", price: 0, emoji: "😀", createdTime: Date())
         self.shopItemList = [ShopItem.MOCK_SHOP_ITEM_1, ShopItem.MOCK_SHOP_ITEM_2, ShopItem.MOCK_SHOP_ITEM_3, ShopItem.MOCK_SHOP_ITEM_4, ShopItem.MOCK_SHOP_ITEM_5, ShopItem.MOCK_SHOP_ITEM_6, ShopItem.MOCK_SHOP_ITEM_7]
         self.uid = ""
     }
@@ -64,7 +64,7 @@ class ShopViewModel: ObservableObject {
             newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1)
             newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2)
             newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3)
-            self.shopItemList = newShopItemList
+            self.shopItemList = newShopItemList.sorted{ $0.createdTime < $1.createdTime }
         }
     }
     
@@ -122,10 +122,13 @@ class ShopViewModel: ObservableObject {
                                 let itemName = doc.get("name") as? String ?? "Error"
                                 let itemPrice = doc.get("price") as? Int ?? 0
                                 let itemEmoji = doc.get("emoji") as? String ?? "❌"
-                                let item = ShopItem(name: itemName, price: itemPrice, emoji: itemEmoji)
+                                let itemCreatedTimestamp = doc.get("createdTime") as? Timestamp ?? Timestamp()
+                                let itemCreatedTime = itemCreatedTimestamp.dateValue()
+                                print("item created time is \(itemCreatedTime)")
+                                let item = ShopItem(name: itemName, price: itemPrice, emoji: itemEmoji, createdTime: itemCreatedTime)
                                 print("item is \(item)")
                                 newShopItemList.append(item)
-                                self.shopItemList = newShopItemList
+                                self.shopItemList = newShopItemList.sorted{ $0.createdTime < $1.createdTime }
                                 print("now new shop item list is \(newShopItemList)")
                             } else {
                                 print("DEBUG: fetch shop item doesn't exist")
@@ -169,7 +172,8 @@ class ShopViewModel: ObservableObject {
         // 1st step: update local self.shopItemList
         if var unwrappedList = self.shopItemList {
             unwrappedList.append(item)
-            shopItemList = unwrappedList
+            shopItemList = unwrappedList.sorted{ $0.createdTime < $1.createdTime }
+            print("after sort \(shopItemList)")
         } else {
             shopItemList = [item]
         }
