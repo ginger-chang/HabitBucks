@@ -44,11 +44,11 @@ struct ShopItemView: View {
                     
                 }
             }
+            // button presentation
             .frame(width: UIScreen.main.bounds.width * 0.45, height: 72)
             .background(Color(.systemGray5))
             .cornerRadius(10)
         }
-        // button presentation
         .buttonStyle(PlainButtonStyle())
         // context menu for edit & delete
         .contextMenu {
@@ -57,11 +57,11 @@ struct ShopItemView: View {
             }
             Button("Delete") {
                 print("Delete \(item.name)")
+                Task {
+                    await shopViewModel.deleteShopItem(item: item)
+                }
             }
         }
-        
-        //.background(Color(.systemGray4))
-        //.cornerRadius(10)
     }
 }
 

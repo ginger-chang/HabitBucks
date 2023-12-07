@@ -25,6 +25,7 @@ class ShopViewModel: ObservableObject {
     static let shared = ShopViewModel()
     var latestShopItem: ShopItem
     private var cancellables: Set<AnyCancellable> = []
+    var itemNameToId: Dictionary<String, String> = [:]
     
     // TODO: (?) init() function called when user is created, store default shopItem in it
     // do it like the way coin manager is set up (with another set subscription function - perhaps)
@@ -46,6 +47,9 @@ class ShopViewModel: ObservableObject {
             shopItemArray.append(id1)
             shopItemArray.append(id2)
             shopItemArray.append(id3)
+            itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_1.name] = id1
+            itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_2.name] = id2
+            itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_3.name] = id3
         } catch {
             print("DEBUG: createShopItems failed with error \(error.localizedDescription)")
         }
@@ -128,6 +132,7 @@ class ShopViewModel: ObservableObject {
                                 let item = ShopItem(name: itemName, price: itemPrice, emoji: itemEmoji, createdTime: itemCreatedTime)
                                 print("item is \(item)")
                                 newShopItemList.append(item)
+                                self.itemNameToId[item.name] = shopItemId
                                 self.shopItemList = newShopItemList.sorted{ $0.createdTime < $1.createdTime }
                                 print("now new shop item list is \(newShopItemList)")
                             } else {
@@ -180,6 +185,7 @@ class ShopViewModel: ObservableObject {
         // 2nd step: add doc in shop_items
         do {
             let itemId = try await storeShopItemToFirestore(item: item)
+            itemNameToId[item.name] = itemId
             // 3rd step: append the new shop item id to user_shop
             let docRef = self.db.collection("user_shop").document(self.uid)
             try await docRef.updateData([
@@ -194,6 +200,29 @@ class ShopViewModel: ObservableObject {
     // TODO: editShopItem()
     
     // TODO: deleteShopItem()
+    func deleteShopItem(item: ShopItem) async {
+        print("delete shop item!")
+        // 1st step: update local self.shopItemList
+        shopItemList?.removeAll{ $0 == item }
+        print("new shop item list: \(self.shopItemList)")
+        // 2nd step: get id of the shop_item from the dict
+        let itemId = itemNameToId[item.name]
+        let docRef = Firestore.firestore().collection("shop_items").document(itemId ?? "")
+        docRef.delete { error in
+            if let error = error {
+                print("DEBUG: Error deleting shop item doc: \(error)")
+            }
+        }
+        // 3rd step: remove the id from user shop doc
+        let userShopDocRef = db.collection("user_shop").document(self.uid)
+        do {
+            try await userShopDocRef.updateData([
+              "shop_item_list": FieldValue.arrayRemove([itemId])
+            ])
+        } catch {
+            print("DEBUG: error when removing item id from user shop doc \(error.localizedDescription)")
+        }
+    }
     
     // helper alert construction functions
     func constructSufficientAlert() -> Alert {
