@@ -44,12 +44,12 @@ struct ShopItemView: View {
                     
                 }
             }
+            .frame(width: UIScreen.main.bounds.width * 0.45, height: 72)
+            .background(Color(.systemGray5))
+            .cornerRadius(10)
         }
         // button presentation
         .buttonStyle(PlainButtonStyle())
-        .frame(width: UIScreen.main.bounds.width * 0.45, height: 72)
-        .background(Color(.systemGray5))
-        .cornerRadius(10)
         // context menu for edit & delete
         .contextMenu {
             Button("Edit") {
