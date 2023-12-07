@@ -11,6 +11,7 @@ struct TaskView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var coinManager: CoinManager
     @EnvironmentObject var taskViewModel: TaskViewModel
+    let activeTaskList = (TaskViewModel.shared.activeBonusTaskList ?? []) + (TaskViewModel.shared.activeOnceTaskList ?? []) + (TaskViewModel.shared.activeDailyTaskList ?? []) + (TaskViewModel.shared.activeWeeklyTaskList ?? [])
     
     var body: some View {
         NavigationView {
@@ -38,7 +39,7 @@ struct TaskView: View {
                 .padding(.horizontal)
                 
                 // MARK: activeTaskList
-                if let activeTaskList = TaskViewModel.shared.activeTaskList {
+                
                     ScrollView {
                         LazyVStack(alignment: .center, spacing: 10) {
                             ForEach(0..<activeTaskList.count, id: \.self) { index in
@@ -49,10 +50,8 @@ struct TaskView: View {
                         }
                         .padding()
                     }
-                }
                 
-                Spacer()
-                Text("task view desu~")
+                
             }
             .padding(.top, 15)
         }

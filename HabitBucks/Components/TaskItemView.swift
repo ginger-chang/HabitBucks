@@ -60,7 +60,7 @@ struct TaskItemView: View {
                     //.foregroundColor(.white)
                     .fontWeight(.semibold)
                     .font(.system(size: 40))
-                    .padding(.leading, 5)
+                    .padding(.leading, 8)
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("\(item.name) \(countText)")
@@ -69,7 +69,7 @@ struct TaskItemView: View {
                             .padding(.top, 4)
                             .lineLimit(2)
                             .truncationMode(.tail)
-                            .frame(width: UIScreen.main.bounds.width * 0.53, alignment: .leading)
+                            .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                         HStack(spacing: 3) {
                             Text("Reward: ")
                             Image(systemName: "dollarsign.circle.fill")
@@ -77,7 +77,6 @@ struct TaskItemView: View {
                                 .foregroundColor(.blue)
                             Text("\(item.reward)")
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
                         }
                     }
                     .padding(.vertical)
@@ -87,7 +86,7 @@ struct TaskItemView: View {
                     } label: {
                         VStack {
                             Image(systemName: completeButtonImage)
-                                .frame(width: UIScreen.main.bounds.width * 0.18, height: 100)
+                                .frame(width: UIScreen.main.bounds.width * 0.18, height: 104)
                                 .foregroundColor(.white)
                                 .scaleEffect(1.7)
                                 .background(mainColor)
@@ -123,6 +122,6 @@ struct TaskItemView: View {
 
 struct TaskItemView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskItemView(item: TaskItem.MOCK_ONCE_TASK_1)
+        TaskItemView(item: TaskItem.MOCK_BONUS_TASK_1)
     }
 }

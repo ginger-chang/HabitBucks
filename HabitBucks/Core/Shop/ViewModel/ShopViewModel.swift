@@ -38,7 +38,7 @@ class ShopViewModel: ObservableObject {
     // This is called only when the user creates an account & need to set up documents
     func createShop() async {
         // creating shop items
-        print("create shop is called")
+        //print("create shop is called")
         var shopItemArray: [String] = []
         do {
             let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
@@ -53,7 +53,7 @@ class ShopViewModel: ObservableObject {
         } catch {
             print("DEBUG: createShopItems failed with error \(error.localizedDescription)")
         }
-        print("shopitem arr: \(shopItemArray)")
+        //print("shopitem arr: \(shopItemArray)")
         
         // creating user shop
         db.collection("user_shop").document(uid).setData([
@@ -81,7 +81,6 @@ class ShopViewModel: ObservableObject {
             .store(in: &cancellables)
         // check if document doesn't exist, create one
         let collection = db.collection("user_shop")
-        print("right before... self uid is \(self.uid)")
         let documentReference = collection.document(self.uid)
         documentReference.getDocument { (document, error) in
             if let error = error {
@@ -96,7 +95,6 @@ class ShopViewModel: ObservableObject {
                 } else {
                     // Document does not exist -> create new shop
                     Task {
-                        print("calling create shop from async setup b/c uid is \(self.uid)")
                         await self.createShop()
                     }
                 }
@@ -114,10 +112,8 @@ class ShopViewModel: ObservableObject {
             } else if let document = document, document.exists {
                 Task {
                     let shopItemStrArr = document.get("shop_item_list") as? [String]
-                    print("user_shop exists, str arr is \(shopItemStrArr)")
                     var newShopItemList: [ShopItem] = []
                     for shopItemId in shopItemStrArr ?? [] {
-                        print("shop item id is \(shopItemId)")
                         let shopItemDocRef = self.db.collection("shop_items").document(shopItemId)
                         try await shopItemDocRef.getDocument { (doc, error) in
                             if let error = error {
@@ -128,13 +124,11 @@ class ShopViewModel: ObservableObject {
                                 let itemEmoji = doc.get("emoji") as? String ?? "❌"
                                 let itemCreatedTimestamp = doc.get("createdTime") as? Timestamp ?? Timestamp()
                                 let itemCreatedTime = itemCreatedTimestamp.dateValue()
-                                print("item created time is \(itemCreatedTime)")
                                 let item = ShopItem(name: itemName, price: itemPrice, emoji: itemEmoji, createdTime: itemCreatedTime)
-                                print("item is \(item)")
                                 newShopItemList.append(item)
                                 self.itemNameToId[item.name] = shopItemId
                                 self.shopItemList = newShopItemList.sorted{ $0.createdTime < $1.createdTime }
-                                print("now new shop item list is \(newShopItemList)")
+                                //print("now new shop item list is \(newShopItemList)")
                             } else {
                                 print("DEBUG: fetch shop item doesn't exist")
                             }
@@ -178,7 +172,6 @@ class ShopViewModel: ObservableObject {
         if var unwrappedList = self.shopItemList {
             unwrappedList.append(item)
             shopItemList = unwrappedList.sorted{ $0.createdTime < $1.createdTime }
-            print("after sort \(shopItemList)")
         } else {
             shopItemList = [item]
         }
@@ -201,10 +194,8 @@ class ShopViewModel: ObservableObject {
     // update firestore db with the new info, then fetch the item from the db, then update self.shopItemList
     
     func deleteShopItem(item: ShopItem) async {
-        print("delete shop item!")
         // 1st step: update local self.shopItemList
         shopItemList?.removeAll{ $0 == item }
-        print("new shop item list: \(self.shopItemList)")
         // 2nd step: get id of the shop_item from the dict
         let itemId = itemNameToId[item.name]
         let docRef = Firestore.firestore().collection("shop_items").document(itemId ?? "")
