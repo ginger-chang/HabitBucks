@@ -29,6 +29,7 @@ class AuthViewModel: ObservableObject {
         Task {
             await fetchUser()
         }
+        
     }
     
     func giveUid() -> String {

@@ -171,7 +171,7 @@ class ShopViewModel: ObservableObject {
         CoinManager.shared.minusCoins(n: item.price)
     }
  
-    // TODO: addShopItem() function to add another shopItem to the database & update view
+    // addShopItem() function to add another shopItem to the database & update view
     func addShopItem(item: ShopItem) async {
         print("add shop item called in shop view model \(item)")
         // 1st step: update local self.shopItemList
@@ -198,8 +198,8 @@ class ShopViewModel: ObservableObject {
     }
     
     // TODO: editShopItem()
+    // update firestore db with the new info, then fetch the item from the db, then update self.shopItemList
     
-    // TODO: deleteShopItem()
     func deleteShopItem(item: ShopItem) async {
         print("delete shop item!")
         // 1st step: update local self.shopItemList

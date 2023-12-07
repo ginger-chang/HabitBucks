@@ -38,6 +38,10 @@
 		D2DC07E22B2007150038DBFC /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E12B2007150038DBFC /* LoadingView.swift */; };
 		D2DC07E42B211D700038DBFC /* AddShopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E32B211D700038DBFC /* AddShopItemView.swift */; };
 		D2DC07E62B21215F0038DBFC /* NumberInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E52B21215F0038DBFC /* NumberInputView.swift */; };
+		D2DC07E82B214F3B0038DBFC /* TaskViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E72B214F3B0038DBFC /* TaskViewModel.swift */; };
+		D2DC07F22B2172EB0038DBFC /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07F12B2172EB0038DBFC /* AddTaskView.swift */; };
+		D2DC07F42B21745D0038DBFC /* TaskItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07F32B21745D0038DBFC /* TaskItem.swift */; };
+		D2DC07F62B217A410038DBFC /* TaskItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07F52B217A410038DBFC /* TaskItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +92,10 @@
 		D2DC07E12B2007150038DBFC /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		D2DC07E32B211D700038DBFC /* AddShopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShopItemView.swift; sourceTree = "<group>"; };
 		D2DC07E52B21215F0038DBFC /* NumberInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberInputView.swift; sourceTree = "<group>"; };
+		D2DC07E72B214F3B0038DBFC /* TaskViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewModel.swift; sourceTree = "<group>"; };
+		D2DC07F12B2172EB0038DBFC /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
+		D2DC07F32B21745D0038DBFC /* TaskItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItem.swift; sourceTree = "<group>"; };
+		D2DC07F52B217A410038DBFC /* TaskItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +201,7 @@
 				D2DC07B42B1D9E010038DBFC /* SettingsRowView.swift */,
 				D2DC07CE2B1E92600038DBFC /* ShopItemView.swift */,
 				D2DC07E52B21215F0038DBFC /* NumberInputView.swift */,
+				D2DC07F52B217A410038DBFC /* TaskItemView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -218,6 +227,7 @@
 				D2DC07B62B1DA0710038DBFC /* User.swift */,
 				D2DC07C72B1E901B0038DBFC /* ShopItem.swift */,
 				D2DC07D42B1EEF930038DBFC /* Coin.swift */,
+				D2DC07F32B21745D0038DBFC /* TaskItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -304,6 +314,7 @@
 			isa = PBXGroup;
 			children = (
 				D2DC07D92B1F2D140038DBFC /* TaskView.swift */,
+				D2DC07F12B2172EB0038DBFC /* AddTaskView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -311,6 +322,7 @@
 		D2DC07D82B1F2D060038DBFC /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				D2DC07E72B214F3B0038DBFC /* TaskViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -474,6 +486,7 @@
 				D2DC07D32B1EEA3B0038DBFC /* CoinManager.swift in Sources */,
 				D2DC07AD2B1D91300038DBFC /* LoginView.swift in Sources */,
 				D2DC07AF2B1D936E0038DBFC /* InputView.swift in Sources */,
+				D2DC07F22B2172EB0038DBFC /* AddTaskView.swift in Sources */,
 				D2DC07D52B1EEF930038DBFC /* Coin.swift in Sources */,
 				D2DC07C82B1E901B0038DBFC /* ShopItem.swift in Sources */,
 				D2DC077E2B1D8FA90038DBFC /* ContentView.swift in Sources */,
@@ -482,12 +495,15 @@
 				D2DC07B72B1DA0710038DBFC /* User.swift in Sources */,
 				D2DC07E02B1F37660038DBFC /* PomodoroView.swift in Sources */,
 				D2DC07B32B1D9BDC0038DBFC /* ProfileView.swift in Sources */,
+				D2DC07E82B214F3B0038DBFC /* TaskViewModel.swift in Sources */,
 				D2DC07D12B1EDFF50038DBFC /* ShopViewModel.swift in Sources */,
 				D2DC07B12B1D99920038DBFC /* RegistrationView.swift in Sources */,
 				D2DC07E62B21215F0038DBFC /* NumberInputView.swift in Sources */,
 				D2DC07E42B211D700038DBFC /* AddShopItemView.swift in Sources */,
 				D2DC07B52B1D9E010038DBFC /* SettingsRowView.swift in Sources */,
 				D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */,
+				D2DC07F42B21745D0038DBFC /* TaskItem.swift in Sources */,
+				D2DC07F62B217A410038DBFC /* TaskItemView.swift in Sources */,
 				D2DC07DD2B1F374C0038DBFC /* AnalysisView.swift in Sources */,
 				D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */,
 				D2DC07E22B2007150038DBFC /* LoadingView.swift in Sources */,

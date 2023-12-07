@@ -11,6 +11,7 @@ struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
     @EnvironmentObject var coinManager: CoinManager
     @EnvironmentObject var shopViewModel: ShopViewModel
+    @EnvironmentObject var taskViewModel: TaskViewModel
     @State private var selectedTab = 2 // set default to task list
     // TODO: if i set this to profile what will happen?? breaks still...
     private var contentViewLoading = true
@@ -61,6 +62,7 @@ struct ContentView: View {
                     }
                     .edgesIgnoringSafeArea(.top)
                     .task {
+                        TaskViewModel.shared = .init()
                         await CoinManager.shared.setupSubscription()
                         await ShopViewModel.shared.asyncSetup()
                         // TODO: add more fetch stuff here!?
@@ -80,6 +82,7 @@ struct ContentView_Previews: PreviewProvider {
                 .environmentObject(AuthViewModel())
                 .environmentObject(CoinManager())
                 .environmentObject(ShopViewModel())
+                .environmentObject(TaskViewModel())
         }
     }
 }
