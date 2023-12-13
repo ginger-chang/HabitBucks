@@ -35,6 +35,8 @@ extension TaskItem {
                                            update: [true, true, true, true, true, true, true])
     static var MOCK_ONCE_TASK_2 = TaskItem(emoji: "💻", name: "Fix computer", reward: 12, type: "once", count_goal: 1, count_cur: 0,
                                            update: [true, true, true, true, true, true, true])
-    static var MOCK_BONUS_TASK_1 = TaskItem(emoji: "🧙‍♀️", name: "Today's Bonus Task: Play a personality test", reward: 5, type: "bonus", count_goal: 1, count_cur: 0,
-                                            update: [false, false, false, false, false, false, false])
+    static var MOCK_BONUS_TASK_1 = TaskItem(emoji: "🧙‍♀️", name: "Today's Bonus Task: Play a personality test", reward: 5,
+                                            type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false])
+    static var BONUS_1 = TaskItem(emoji: "💌", name: "Bonus Task: Tell someone you appreciate them", reward: 10,
+                                  type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false])
 }

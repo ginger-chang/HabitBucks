@@ -10,12 +10,14 @@ import SwiftUI
 struct TaskItemView: View {
     let item: TaskItem
     var mainColor: Color {
-        if item.type == "bonus" {
-            return Color(.systemPurple)
+        if item.count_cur == item.count_goal {
+            return Color(.systemGray)
         } else if item.type == "daily" {
             return Color(.systemCyan)
         } else if item.type == "once" {
             return Color(.systemYellow)
+        } else if item.type == "bonus" {
+            return Color(.systemPurple)
         } else {
             return Color(.systemGreen)
         }
@@ -38,11 +40,24 @@ struct TaskItemView: View {
             return "plus"
         }
     }
+    var completeButtonActive: Bool {
+        if item.count_cur == item.count_goal {
+            return false
+        }
+        return true
+    }
     var countText: String {
         if item.count_goal == 1 {
             return ""
         } else {
             return "(\(item.count_cur)/\(item.count_goal))"
+        }
+    }
+    var rewardCountText: String {
+        if item.count_goal == 1 {
+            return ""
+        } else {
+            return "/click"
         }
     }
     var progressValue: Float {
@@ -69,16 +84,16 @@ struct TaskItemView: View {
                             .padding(.top, 4)
                             .lineLimit(2)
                             .truncationMode(.tail)
-                            .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                         HStack(spacing: 3) {
                             Text("Reward: ")
                             Image(systemName: "dollarsign.circle.fill")
                                 .imageScale(.medium)
                                 .foregroundColor(.blue)
-                            Text("\(item.reward)")
+                            Text("\(item.reward) \(rewardCountText)")
                                 .font(.subheadline)
                         }
                     }
+                    .frame(width: UIScreen.main.bounds.width * 0.5, alignment: .leading)
                     .padding(.vertical)
                     Spacer()
                     Button {
@@ -92,6 +107,7 @@ struct TaskItemView: View {
                                 .background(mainColor)
                         }
                     }
+                    .disabled(!completeButtonActive)
                 }
             }
             // progress bar
@@ -108,6 +124,9 @@ struct TaskItemView: View {
        
         // context menu for edit & delete
         .contextMenu {
+            Button("Reset") {
+                print("Reset \(item.name)")
+            }
             if (contextMenuActive) {
                 Button("Edit") {
                     print("Edit \(item.name)")
@@ -122,6 +141,6 @@ struct TaskItemView: View {
 
 struct TaskItemView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskItemView(item: TaskItem.MOCK_BONUS_TASK_1)
+        TaskItemView(item: TaskItem.BONUS_1)
     }
 }
