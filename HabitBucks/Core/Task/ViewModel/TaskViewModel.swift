@@ -18,13 +18,21 @@ class TaskViewModel: ObservableObject {
     @Published var activeOnceTaskList: [TaskItem]?
     @Published var activeDailyTaskList: [TaskItem]?
     @Published var activeWeeklyTaskList: [TaskItem]?
+    @Published var inactiveBonusTaskList: [TaskItem]?
+    @Published var inactiveOnceTaskList: [TaskItem]?
+    @Published var inactiveDailyTaskList: [TaskItem]?
+    @Published var inactiveWeeklyTaskList: [TaskItem]?
     
     static var shared = TaskViewModel()
     
     init() {
         self.activeBonusTaskList = [TaskItem.MOCK_BONUS_TASK_1]
-        self.activeOnceTaskList = [TaskItem.MOCK_ONCE_TASK_1, TaskItem.MOCK_ONCE_TASK_2]
+        self.activeOnceTaskList = [TaskItem.MOCK_ONCE_TASK_2]
         self.activeDailyTaskList = [TaskItem.MOCK_DAILY_TASK_1, TaskItem.MOCK_DAILY_TASK_2]
         self.activeWeeklyTaskList = [TaskItem.MOCK_WEEKLY_TASK_1, TaskItem.MOCK_WEEKLY_TASK_2]
+        self.inactiveBonusTaskList = []
+        self.inactiveOnceTaskList = [TaskItem.MOCK_ONCE_TASK_1]
+        self.inactiveDailyTaskList = []
+        self.inactiveWeeklyTaskList = []
     }
 }

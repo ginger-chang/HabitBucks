@@ -12,6 +12,7 @@ struct TaskView: View {
     @EnvironmentObject var coinManager: CoinManager
     @EnvironmentObject var taskViewModel: TaskViewModel
     let activeTaskList = (TaskViewModel.shared.activeBonusTaskList ?? []) + (TaskViewModel.shared.activeOnceTaskList ?? []) + (TaskViewModel.shared.activeDailyTaskList ?? []) + (TaskViewModel.shared.activeWeeklyTaskList ?? [])
+    let inactiveTaskList = (TaskViewModel.shared.inactiveBonusTaskList ?? []) + (TaskViewModel.shared.inactiveOnceTaskList ?? []) + (TaskViewModel.shared.inactiveDailyTaskList ?? []) + (TaskViewModel.shared.inactiveWeeklyTaskList ?? [])
     
     var body: some View {
         NavigationView {
@@ -42,9 +43,14 @@ struct TaskView: View {
                 
                     ScrollView {
                         LazyVStack(alignment: .center, spacing: 10) {
-                            ForEach(0..<activeTaskList.count, id: \.self) { index in
+                            ForEach(0..<activeTaskList.count, id: \.self) { i in
                                 HStack {
-                                    TaskItemView(item: activeTaskList[index])
+                                    TaskItemView(item: activeTaskList[i])
+                                }
+                            }
+                            ForEach(activeTaskList.count..<inactiveTaskList.count + activeTaskList.count, id: \.self) { i in
+                                HStack {
+                                    TaskItemView(item: inactiveTaskList[i - activeTaskList.count])
                                 }
                             }
                         }
