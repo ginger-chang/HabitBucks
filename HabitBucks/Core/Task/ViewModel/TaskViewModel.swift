@@ -187,6 +187,14 @@ class TaskViewModel: ObservableObject {
         //printDebug()
     }
     
+    func resetTask(item: TaskItem) {
+        print("reset task!! \(item.name)")
+        let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: 0, update: item.update, view: item.view)
+        CoinManager.shared.minusCoins(n: item.reward * item.count_cur)
+        // TODO: update firestore entry
+        updateListEntry(oldItem: item, newItem: newItem)
+    }
+    
     func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {
         if (newItem.count_cur == newItem.count_goal) {
             if (newItem.type == "once") {
@@ -208,6 +216,21 @@ class TaskViewModel: ObservableObject {
                 }
                 self.inactiveWeeklyTaskList?.append(newItem)
                 print("add \(newItem.name) \(newItem.count_cur)")
+            }
+        } else if (oldItem.count_cur == oldItem.count_goal && newItem.count_cur != newItem.count_goal) {
+            // reset
+            if (newItem.type == "daily") {
+                if var list = self.inactiveDailyTaskList {
+                    list.removeAll { $0 == oldItem }
+                    self.activeDailyTaskList = list
+                }
+                self.activeDailyTaskList?.append(newItem)
+            } else if (newItem.type == "weekly") {
+                if var list = self.inactiveWeeklyTaskList {
+                    list.removeAll { $0 == oldItem }
+                    self.inactiveWeeklyTaskList = list
+                }
+                self.activeWeeklyTaskList?.append(newItem)
             }
         } else {
             if (newItem.type == "once") {
