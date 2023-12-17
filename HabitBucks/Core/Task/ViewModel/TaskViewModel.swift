@@ -14,12 +14,13 @@ import SwiftUI
 import Combine
 
 class TaskViewModel: ObservableObject {
+    @Published var activeTaskList: [TaskItem]?
+    @Published var inactiveTaskList: [TaskItem]?
     @Published var activeBonusTaskList: [TaskItem]?
     @Published var activeOnceTaskList: [TaskItem]?
     @Published var activeDailyTaskList: [TaskItem]?
     @Published var activeWeeklyTaskList: [TaskItem]?
     @Published var inactiveBonusTaskList: [TaskItem]?
-    @Published var inactiveOnceTaskList: [TaskItem]?
     @Published var inactiveDailyTaskList: [TaskItem]?
     @Published var inactiveWeeklyTaskList: [TaskItem]?
     
@@ -121,7 +122,6 @@ class TaskViewModel: ObservableObject {
                     var newActiveOnceList: [TaskItem] = []
                     var newActiveDailyList: [TaskItem] = []
                     var newActiveWeeklyList: [TaskItem] = []
-                    var newInactiveOnceList: [TaskItem] = []
                     var newInactiveDailyList: [TaskItem] = []
                     var newInactiveWeeklyList: [TaskItem] = []
                     for taskItemId in taskIdList ?? [] {
@@ -140,10 +140,7 @@ class TaskViewModel: ObservableObject {
                                 let itemView = doc.get("view") as? [Bool] ?? []
                                 let item = TaskItem(emoji: itemEmoji, name: itemName, reward: itemReward, type: itemType, count_goal: itemCountGoal, count_cur: itemCountCur, update: itemUpdate, view: itemView)
                                 if (itemCountCur == itemCountGoal) { // INACTIVE
-                                    if (itemType == "once") {
-                                        newInactiveOnceList.append(item)
-                                        self.inactiveOnceTaskList = newInactiveOnceList
-                                    } else if (itemType == "daily") {
+                                    if (itemType == "daily") {
                                         newInactiveDailyList.append(item)
                                         self.inactiveDailyTaskList = newInactiveDailyList
                                     } else if (itemType == "weekly") {
@@ -177,6 +174,64 @@ class TaskViewModel: ObservableObject {
         }
     }
     
+    // count_cur + 1
+    func completeTask(item: TaskItem) {
+        // create a new item
+        let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: item.count_cur + 1, update: item.update, view: item.view)
+        print("newItem: \(newItem)")
+        CoinManager.shared.addCoins(n: item.reward)
+        // TODO: update firestore entry
+        
+        // update self.lists -> maybe can make into
+        updateListEntry(oldItem: item, newItem: newItem)
+        //printDebug()
+    }
+    
+    func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {
+        if (newItem.count_cur == newItem.count_goal) {
+            if (newItem.type == "once") {
+                if var list = self.activeOnceTaskList {
+                    list.removeAll { $0 == oldItem }
+                    self.activeOnceTaskList = list
+                }
+            } else if (newItem.type == "daily") {
+                if var list = self.activeDailyTaskList {
+                    list.removeAll { $0 == oldItem }
+                    self.activeDailyTaskList = list
+                }
+                self.inactiveDailyTaskList?.append(newItem)
+                print("add \(newItem.name) \(newItem.count_cur)")
+            } else if (newItem.type == "weekly") {
+                if var list = self.activeWeeklyTaskList {
+                    list.removeAll { $0 == oldItem }
+                    self.activeWeeklyTaskList = list
+                }
+                self.inactiveWeeklyTaskList?.append(newItem)
+                print("add \(newItem.name) \(newItem.count_cur)")
+            }
+        } else {
+            if (newItem.type == "once") {
+                if var list = self.activeOnceTaskList {
+                    list.removeAll { $0 == oldItem }
+                    list.append(newItem)
+                    self.activeOnceTaskList = list
+                }
+            } else if (newItem.type == "daily") {
+                if var list = self.activeDailyTaskList {
+                    list.removeAll { $0 == oldItem }
+                    list.append(newItem)
+                    self.activeDailyTaskList = list
+                }
+            } else if (newItem.type == "weekly") {
+                if var list = self.activeWeeklyTaskList {
+                    list.removeAll { $0 == oldItem }
+                    list.append(newItem)
+                    self.activeWeeklyTaskList = list
+                }
+            }
+        }
+    }
+    
     // returns id of the document
     func storeTaskItemToFirestore(item: TaskItem) async throws -> String {
         let encodedTaskItem = try Firestore.Encoder().encode(item)
@@ -185,8 +240,38 @@ class TaskViewModel: ObservableObject {
     }
     
     // whenever task is modified in some way
-    func updateTaskItemInFirestore(item: TaskItem) async {
-        
+    // try not to use async, see coin manager
+    // first check if oldName exists -> if yes, then directly get id from itemNameToId
+    // else delete old entry from dict, and add new name
+    func updateTaskItemInFirestore(oldName: String, item: TaskItem) {
+        /*
+        if self.uid == "" {
+            guard case let self.uid = Auth.auth().currentUser?.uid else {
+                print("Something went wrong wuwuwu taskVM \(self.uid)")
+                return
+            }
+        }
+        print("update task item in firestore")
+        // check if document doesn't exist, add another
+        let collection = db.collection("coins")
+        let documentReference = collection.document(self.uid)
+        documentReference.getDocument { (document, error) in
+            if let error = error {
+                print("DEBUG: failed to fetch coin doc with error \(error.localizedDescription)")
+            } else {
+                // Check if the document exists
+                if let document = document, document.exists {
+                    // Document exists -> update document
+                    documentReference.updateData([
+                        "total_coins": self.coins,
+                    ]) { error in
+                        if let error = error {
+                            print("DEBUG: Error updating coin document: \(error)")
+                        }
+                    }
+                }
+            }
+        }*/
     }
 
     // separated the day by 4am
@@ -206,5 +291,22 @@ class TaskViewModel: ObservableObject {
         let formattedDateString = dateFormatter.string(from: customStartTime)
         
         return formattedDateString
+    }
+    
+    func printDebug() {
+        print("---------------")
+        print("active list:")
+        print("\(self.activeBonusTaskList) \(self.activeOnceTaskList) \(self.activeDailyTaskList) \(self.activeWeeklyTaskList)")
+        print("inactive list:")
+        print("\(self.inactiveBonusTaskList) \(self.inactiveDailyTaskList) \(self.inactiveWeeklyTaskList)")
+        print("---------------")
+    }
+    
+    func updateActiveTaskList() {
+        //self.activeTaskList = (self.activeBonusTaskList) ?? [] + (self.activeOnceTaskList) ?? [] + (self.activeDailyTaskList) ?? [] + (self.activeWeeklyTaskList) ?? []
+    }
+    
+    func updateInactiveTaskList() {
+       // self.inactiveTaskList = (self.inactiveBonusTaskList) ?? [] + (self.inactiveDailyTaskList) ?? [] + (self.inactiveWeeklyTaskList) ?? []
     }
 }

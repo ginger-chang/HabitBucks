@@ -11,8 +11,8 @@ struct TaskView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var coinManager: CoinManager
     @EnvironmentObject var taskViewModel: TaskViewModel
-    let activeTaskList = (TaskViewModel.shared.activeBonusTaskList ?? []) + (TaskViewModel.shared.activeOnceTaskList ?? []) + (TaskViewModel.shared.activeDailyTaskList ?? []) + (TaskViewModel.shared.activeWeeklyTaskList ?? [])
-    let inactiveTaskList = (TaskViewModel.shared.inactiveBonusTaskList ?? []) + (TaskViewModel.shared.inactiveDailyTaskList ?? []) + (TaskViewModel.shared.inactiveWeeklyTaskList ?? [])
+    var activeTaskList = (TaskViewModel.shared.activeBonusTaskList ?? []) + (TaskViewModel.shared.activeOnceTaskList ?? []) + (TaskViewModel.shared.activeDailyTaskList ?? []) + (TaskViewModel.shared.activeWeeklyTaskList ?? [])
+    var inactiveTaskList = (TaskViewModel.shared.inactiveBonusTaskList ?? []) + (TaskViewModel.shared.inactiveDailyTaskList ?? []) + (TaskViewModel.shared.inactiveWeeklyTaskList ?? [])
     
     var body: some View {
         NavigationView {
@@ -43,16 +43,13 @@ struct TaskView: View {
                 
                     ScrollView {
                         LazyVStack(alignment: .center, spacing: 10) {
-                            ForEach(0..<activeTaskList.count, id: \.self) { i in
-                                HStack {
-                                    TaskItemView(item: activeTaskList[i])
-                                }
-                            }
-                            ForEach(activeTaskList.count..<inactiveTaskList.count + activeTaskList.count, id: \.self) { i in
-                                HStack {
-                                    TaskItemView(item: inactiveTaskList[i - activeTaskList.count])
-                                }
-                            }
+                            TaskListView(taskItemList: TaskViewModel.shared.activeBonusTaskList)
+                            TaskListView(taskItemList: TaskViewModel.shared.activeOnceTaskList)
+                            TaskListView(taskItemList: TaskViewModel.shared.activeDailyTaskList)
+                            TaskListView(taskItemList: TaskViewModel.shared.activeWeeklyTaskList)
+                            TaskListView(taskItemList: TaskViewModel.shared.inactiveBonusTaskList)
+                            TaskListView(taskItemList: TaskViewModel.shared.inactiveDailyTaskList)
+                            TaskListView(taskItemList: TaskViewModel.shared.inactiveWeeklyTaskList)
                         }
                         .padding()
                     }

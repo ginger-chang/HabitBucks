@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct TaskItem: Codable {
+struct TaskItem: Codable, Identifiable {
+    let id = UUID()
     let emoji: String
     let name: String
     let reward: Int
@@ -28,8 +29,9 @@ struct TaskItem: Codable {
      "auto-reset"
      */
     
+    
     static func == (lhs: TaskItem, rhs: TaskItem) -> Bool {
-        return lhs.emoji == rhs.emoji && lhs.name == rhs.name && lhs.reward == rhs.reward && lhs.type == rhs.type && lhs.update == rhs.update
+        return lhs.emoji == rhs.emoji && lhs.name == rhs.name && lhs.reward == rhs.reward && lhs.type == rhs.type
     }
 }
 
