@@ -97,6 +97,7 @@ struct TaskItemView: View {
                     .padding(.vertical)
                     Spacer()
                     Button {
+                        
                         print("complete task item \(item.name)")
                     } label: {
                         VStack {

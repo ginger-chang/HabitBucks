@@ -38,7 +38,6 @@ class ShopViewModel: ObservableObject {
     // This is called only when the user creates an account & need to set up documents
     func createShop() async {
         // creating shop items
-        //print("create shop is called")
         var shopItemArray: [String] = []
         do {
             let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
@@ -53,8 +52,6 @@ class ShopViewModel: ObservableObject {
         } catch {
             print("DEBUG: createShopItems failed with error \(error.localizedDescription)")
         }
-        //print("shopitem arr: \(shopItemArray)")
-        
         // creating user shop
         db.collection("user_shop").document(uid).setData([
             "shop_item_list": shopItemArray,
@@ -104,7 +101,6 @@ class ShopViewModel: ObservableObject {
     
     // update the self.shopItemList variable based on database
     func fetchShopItemList() async {
-        print("fetch shop item list")
         let docRef = self.db.collection("user_shop").document(self.uid)
         docRef.getDocument { (document, error) in
             if let error = error {
