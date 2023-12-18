@@ -133,7 +133,9 @@ struct TaskItemView: View {
                     print("Edit \(item.name)")
                 }
                 Button("Delete") {
-                    print("Delete \(item.name)")
+                    Task {
+                        await TaskViewModel.shared.deleteTask(item: item)
+                    }
                 }
             }
         }

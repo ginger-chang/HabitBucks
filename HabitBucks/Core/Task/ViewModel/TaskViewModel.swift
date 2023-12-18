@@ -158,7 +158,6 @@ class TaskViewModel: ObservableObject {
                                     }
                                 }
                                 self.itemNameToId[item.name] = taskItemId
-                                print(self.activeWeeklyTaskList)
                             } else {
                                 print("DEBUG: fetch task item doesn't exist")
                             }
@@ -173,7 +172,6 @@ class TaskViewModel: ObservableObject {
     }
     
     func addTask(item: TaskItem) async {
-        print("add task: \(item)")
         // add locally
         DispatchQueue.main.async {
             if (item.type == "once") {
@@ -217,6 +215,46 @@ class TaskViewModel: ObservableObject {
         CoinManager.shared.minusCoins(n: item.reward * item.count_cur)
         try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
         updateListEntry(oldItem: item, newItem: newItem)
+    }
+    
+    func deleteTask(item: TaskItem) async {
+        print("delete \(item.name)")
+        // 1. update locally
+        if (item.count_cur == item.count_goal) {
+            // inactive list
+            if (item.type == "daily") {
+                self.inactiveDailyTaskList?.removeAll{ $0 == item }
+            } else if (item.type == "weekly") {
+                self.inactiveWeeklyTaskList?.removeAll{ $0 == item }
+            }
+        } else {
+            // active list
+            if (item.type == "once") {
+                self.activeOnceTaskList?.removeAll{ $0 == item }
+            } else if (item.type == "daily") {
+                self.activeDailyTaskList?.removeAll{ $0 == item }
+            } else if (item.type == "weekly") {
+                self.activeWeeklyTaskList?.removeAll{ $0 == item }
+            }
+        }
+        // 2. update task_items
+        let itemId = itemNameToId[item.name]
+        print("delete item id \(itemId)")
+        let docRef = db.collection("task_items").document(itemId ?? "")
+        docRef.delete { error in
+            if let error = error {
+                print("DEBUG: error deleting task item, \(error)")
+            }
+        }
+        // 3. update user_tasks
+        let userTasksDocRef = db.collection("user_tasks").document(self.uid)
+        do {
+            try await userTasksDocRef.updateData([
+                "task_item_list": FieldValue.arrayRemove([itemId])
+            ])
+        } catch {
+            print("DEBUG: error removing task item from user tasks list, \(error.localizedDescription)")
+        }
     }
     
     func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {
