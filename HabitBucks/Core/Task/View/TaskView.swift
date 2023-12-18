@@ -58,7 +58,6 @@ struct TaskView: View {
             }
             .padding(.top, 15)
         }
-        
     }
 }
 

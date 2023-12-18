@@ -16,7 +16,7 @@ struct AddTaskView: View {
     @State private var count_goal = ""
     @State private var update = [false, false, false, false, false, false, false]
     @State private var view = [false, false, false, false, false, false, false]
-
+    @State private var recurrence: String = ""
     
     var body: some View {
         VStack {
@@ -27,7 +27,7 @@ struct AddTaskView: View {
             }
             .padding(.horizontal)
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(alignment: .leading, spacing: 24) {
                     InputView(
                         text: $emoji,
                         title: "Emoji",
@@ -44,15 +44,26 @@ struct AddTaskView: View {
                         text: $count_goal, // convert this to int later
                         title: "Count",
                         placeholder: "5")
-                    DayInputView(
-                        selectedDays: $update,
-                        title: "Update on")
-                    DayInputView(
-                        selectedDays: $view,
-                        title: "View on")
+                    Text("Recurrence Settings") // no recurrence, daily, custom
+                        .fontWeight(.semibold)
+                    VStack(alignment: .leading, spacing: 10) {
+                        RadioButton(label: "No recurrence", groupBinding: $recurrence, value: "once")
+                        RadioButton(label: "Daily", groupBinding: $recurrence, value: "daily")
+                        RadioButton(label: "Weekly (Start on Sunday)", groupBinding: $recurrence, value: "weekly0")
+                        RadioButton(label: "Weekly (Start on Monday)", groupBinding: $recurrence, value: "weekly1")
+                        RadioButton(label: "Custom", groupBinding: $recurrence, value: "weekly")
+                    }
+                    if (recurrence == "weekly") {
+                        DayInputView(
+                            selectedDays: $update,
+                            title: "Update on")
+                        DayInputView(
+                            selectedDays: $view,
+                            title: "View on")
+                    }
                 }
                 .padding(.horizontal)
-                .padding(.top, 12)
+                .padding(.top, 5)
                 
                 Button {
                     // let newItem = TaskItem()
@@ -60,6 +71,7 @@ struct AddTaskView: View {
                         print("add new item~ ")
                         print("update is \(update)")
                         print("view is \(view)")
+                        print("selected \(recurrence)")
                     }
                     dismiss()
                 } label: {
@@ -73,10 +85,9 @@ struct AddTaskView: View {
                 .background(Color(.systemBlue))
                 .cornerRadius(10)
                 .padding(.top)
-                
-                Spacer()
             }
-            
+            .navigationBarTitle("Your Title", displayMode: .inline)
+            Spacer()
         }
     }
 }
