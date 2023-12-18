@@ -273,7 +273,7 @@ class TaskViewModel: ObservableObject {
                 }
             }
             // remove the id from user shop doc
-            let userTaskDocRef = db.collection("user_shop").document(self.uid)
+            let userTaskDocRef = db.collection("user_tasks").document(self.uid)
             Task {
                 try await userTaskDocRef.updateData([
                   "task_item_list": FieldValue.arrayRemove([itemId])
