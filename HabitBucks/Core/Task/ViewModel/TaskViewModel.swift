@@ -83,7 +83,6 @@ class TaskViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         // check if document doesn't exist, create one
-        print("self.uid is \(self.uid)")
         let collection = db.collection("user_tasks")
         let documentReference = collection.document(self.uid)
         documentReference.getDocument { (document, error) in
@@ -141,21 +140,21 @@ class TaskViewModel: ObservableObject {
                                 if (itemCountCur == itemCountGoal) { // INACTIVE
                                     if (itemType == "daily") {
                                         newInactiveDailyList.append(item)
-                                        self.inactiveDailyTaskList = newInactiveDailyList
+                                        self.inactiveDailyTaskList = newInactiveDailyList.sorted{ $0.name < $1.name }
                                     } else if (itemType == "weekly") {
                                         newInactiveWeeklyList.append(item)
-                                        self.inactiveWeeklyTaskList = newInactiveWeeklyList
+                                        self.inactiveWeeklyTaskList = newInactiveWeeklyList.sorted{ $0.name < $1.name }
                                     }
                                 } else { // ACTIVE
                                     if (itemType == "once") {
                                         newActiveOnceList.append(item)
-                                        self.activeOnceTaskList = newActiveOnceList
+                                        self.activeOnceTaskList = newActiveOnceList.sorted{ $0.name < $1.name }
                                     } else if (itemType == "daily") {
                                         newActiveDailyList.append(item)
-                                        self.activeDailyTaskList = newActiveDailyList
+                                        self.activeDailyTaskList = newActiveDailyList.sorted{ $0.name < $1.name }
                                     } else if (itemType == "weekly") {
                                         newActiveWeeklyList.append(item)
-                                        self.activeWeeklyTaskList = newActiveWeeklyList
+                                        self.activeWeeklyTaskList = newActiveWeeklyList.sorted{ $0.name < $1.name }
                                     }
                                 }
                                 self.itemNameToId[item.name] = taskItemId
@@ -179,10 +178,13 @@ class TaskViewModel: ObservableObject {
         DispatchQueue.main.async {
             if (item.type == "once") {
                 self.activeOnceTaskList?.append(item)
+                self.activeOnceTaskList = self.activeOnceTaskList?.sorted{ $0.name < $1.name }
             } else if (item.type == "daily") {
                 self.activeDailyTaskList?.append(item)
+                self.activeDailyTaskList = self.activeDailyTaskList?.sorted{ $0.name < $1.name }
             } else if (item.type == "weekly") {
                 self.activeWeeklyTaskList?.append(item)
+                self.activeWeeklyTaskList = self.activeWeeklyTaskList?.sorted{ $0.name < $1.name }
             }
         }
         // add to firestore & append to firestore array
@@ -222,56 +224,57 @@ class TaskViewModel: ObservableObject {
             if (newItem.type == "once") {
                 if var list = self.activeOnceTaskList {
                     list.removeAll { $0 == oldItem }
-                    self.activeOnceTaskList = list
+                    self.activeOnceTaskList = list.sorted{ $0.name < $1.name }
                 }
             } else if (newItem.type == "daily") {
                 if var list = self.activeDailyTaskList {
                     list.removeAll { $0 == oldItem }
-                    self.activeDailyTaskList = list
+                    self.activeDailyTaskList = list.sorted{ $0.name < $1.name }
                 }
                 self.inactiveDailyTaskList?.append(newItem)
-                print("add \(newItem.name) \(newItem.count_cur)")
+                self.inactiveDailyTaskList = self.inactiveDailyTaskList?.sorted{ $0.name < $1.name }
             } else if (newItem.type == "weekly") {
                 if var list = self.activeWeeklyTaskList {
                     list.removeAll { $0 == oldItem }
-                    self.activeWeeklyTaskList = list
+                    self.activeWeeklyTaskList = list.sorted{ $0.name < $1.name }
                 }
                 self.inactiveWeeklyTaskList?.append(newItem)
-                print("add \(newItem.name) \(newItem.count_cur)")
+                self.inactiveWeeklyTaskList = self.inactiveWeeklyTaskList?.sorted{ $0.name < $1.name }
             }
         } else if (oldItem.count_cur == oldItem.count_goal && newItem.count_cur != newItem.count_goal) {
             // reset
             if (newItem.type == "daily") {
                 if var list = self.inactiveDailyTaskList {
                     list.removeAll { $0 == oldItem }
-                    self.inactiveDailyTaskList = list
+                    self.inactiveDailyTaskList = list.sorted{ $0.name < $1.name }
                 }
                 self.activeDailyTaskList?.append(newItem)
             } else if (newItem.type == "weekly") {
                 if var list = self.inactiveWeeklyTaskList {
                     list.removeAll { $0 == oldItem }
-                    self.inactiveWeeklyTaskList = list
+                    self.inactiveWeeklyTaskList = list.sorted{ $0.name < $1.name }
                 }
                 self.activeWeeklyTaskList?.append(newItem)
+                self.activeWeeklyTaskList = self.activeWeeklyTaskList?.sorted{ $0.name < $1.name }
             }
         } else {
             if (newItem.type == "once") {
                 if var list = self.activeOnceTaskList {
                     list.removeAll { $0 == oldItem }
                     list.append(newItem)
-                    self.activeOnceTaskList = list
+                    self.activeOnceTaskList = list.sorted{ $0.name < $1.name }
                 }
             } else if (newItem.type == "daily") {
                 if var list = self.activeDailyTaskList {
                     list.removeAll { $0 == oldItem }
                     list.append(newItem)
-                    self.activeDailyTaskList = list
+                    self.activeDailyTaskList = list.sorted{ $0.name < $1.name }
                 }
             } else if (newItem.type == "weekly") {
                 if var list = self.activeWeeklyTaskList {
                     list.removeAll { $0 == oldItem }
                     list.append(newItem)
-                    self.activeWeeklyTaskList = list
+                    self.activeWeeklyTaskList = list.sorted{ $0.name < $1.name }
                 }
             }
         }
