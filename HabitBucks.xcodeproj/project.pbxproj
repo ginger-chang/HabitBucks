@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D20CA7F82B2F531A00FFE005 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20CA7F72B2F531A00FFE005 /* TaskListView.swift */; };
+		D23EA3592B30265D00C9E436 /* DayInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23EA3582B30265D00C9E436 /* DayInputView.swift */; };
 		D2DC077C2B1D8FA90038DBFC /* HabitBucksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */; };
 		D2DC077E2B1D8FA90038DBFC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC077D2B1D8FA90038DBFC /* ContentView.swift */; };
 		D2DC07802B1D8FAB0038DBFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2DC077F2B1D8FAB0038DBFC /* Assets.xcassets */; };
@@ -64,6 +65,7 @@
 
 /* Begin PBXFileReference section */
 		D20CA7F72B2F531A00FFE005 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		D23EA3582B30265D00C9E436 /* DayInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayInputView.swift; sourceTree = "<group>"; };
 		D2DC07782B1D8FA90038DBFC /* HabitBucks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitBucks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitBucksApp.swift; sourceTree = "<group>"; };
 		D2DC077D2B1D8FA90038DBFC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				D2DC07E52B21215F0038DBFC /* NumberInputView.swift */,
 				D2DC07F52B217A410038DBFC /* TaskItemView.swift */,
 				D20CA7F72B2F531A00FFE005 /* TaskListView.swift */,
+				D23EA3582B30265D00C9E436 /* DayInputView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -511,6 +514,7 @@
 				D2DC07DD2B1F374C0038DBFC /* AnalysisView.swift in Sources */,
 				D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */,
 				D2DC07E22B2007150038DBFC /* LoadingView.swift in Sources */,
+				D23EA3592B30265D00C9E436 /* DayInputView.swift in Sources */,
 				D2DC07C62B1DA8470038DBFC /* AuthViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
