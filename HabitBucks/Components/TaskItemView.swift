@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct TaskItemView: View {
+    @EnvironmentObject var taskViewModel: TaskViewModel
+    
     let item: TaskItem
     var mainColor: Color {
-        if item.count_cur == item.count_goal {
+        if item.count_cur == item.count_goal || (item.type == "bonus" && taskViewModel.bonusStatus){
             return Color(.systemGray)
         } else if item.type == "daily" {
             return Color(.systemCyan)
@@ -22,17 +24,6 @@ struct TaskItemView: View {
             return Color(.systemGreen)
         }
     }
-    var barColor: Color {
-        if item.type == "bonus" {
-            return Color(.purple)
-        } else if item.type == "daily" {
-            return Color(.cyan)
-        } else if item.type == "once" {
-            return Color(.yellow)
-        } else {
-            return Color(.green)
-        }
-    }
     var completeButtonImage: String {
         if item.count_goal == 1 {
             return "checkmark"
@@ -41,7 +32,7 @@ struct TaskItemView: View {
         }
     }
     var completeButtonActive: Bool {
-        if item.count_cur == item.count_goal {
+        if (item.count_cur == item.count_goal || (item.type == "bonus" && taskViewModel.bonusStatus)) {
             return false
         }
         return true
@@ -145,5 +136,6 @@ struct TaskItemView: View {
 struct TaskItemView_Previews: PreviewProvider {
     static var previews: some View {
         TaskItemView(item: TaskItem.BONUS_1)
+            .environmentObject(TaskViewModel())
     }
 }

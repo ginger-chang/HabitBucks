@@ -21,6 +21,8 @@ class TaskViewModel: ObservableObject {
     @Published var inactiveBonusTaskList: [TaskItem]?
     @Published var inactiveDailyTaskList: [TaskItem]?
     @Published var inactiveWeeklyTaskList: [TaskItem]?
+    @Published var bonusStatus: Bool
+    // true = active; false = inactive
     
     private var uid: String
     private var db = Firestore.firestore()
@@ -38,6 +40,7 @@ class TaskViewModel: ObservableObject {
         self.inactiveDailyTaskList = []
         self.inactiveWeeklyTaskList = []
         self.uid = ""
+        self.bonusStatus = false
     }
     
     // This is called only when the user creates an account & need to set up documents
@@ -198,8 +201,25 @@ class TaskViewModel: ObservableObject {
         }
     }
     
+    func completeBonus(item: TaskItem) {
+        self.activeBonusTaskList = []
+        self.inactiveBonusTaskList = [item]
+        self.bonusStatus = true
+        let userTaskDocRef = db.collection("user_tasks").document(self.uid)
+        CoinManager.shared.addCoins(n: item.reward)
+        Task {
+            try await userTaskDocRef.updateData([
+                "bonus_status": true
+            ])
+        }
+    }
+    
     // count_cur + 1
     func completeTask(item: TaskItem) {
+        if (item.type == "bonus") {
+            completeBonus(item: item)
+            return
+        }
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: item.count_cur + 1, update: item.update, view: item.view)
         print("newItem: \(newItem)")
         CoinManager.shared.addCoins(n: item.reward)
