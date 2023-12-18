@@ -14,8 +14,6 @@ import SwiftUI
 import Combine
 
 class TaskViewModel: ObservableObject {
-    @Published var activeTaskList: [TaskItem]?
-    @Published var inactiveTaskList: [TaskItem]?
     @Published var activeBonusTaskList: [TaskItem]?
     @Published var activeOnceTaskList: [TaskItem]?
     @Published var activeDailyTaskList: [TaskItem]?
@@ -176,22 +174,20 @@ class TaskViewModel: ObservableObject {
     
     // count_cur + 1
     func completeTask(item: TaskItem) {
-        // create a new item
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: item.count_cur + 1, update: item.update, view: item.view)
         print("newItem: \(newItem)")
         CoinManager.shared.addCoins(n: item.reward)
         // TODO: update firestore entry
-        
-        // update self.lists -> maybe can make into
+        try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
         updateListEntry(oldItem: item, newItem: newItem)
-        //printDebug()
     }
     
+    // count_cur = 0
     func resetTask(item: TaskItem) {
         print("reset task!! \(item.name)")
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: 0, update: item.update, view: item.view)
         CoinManager.shared.minusCoins(n: item.reward * item.count_cur)
-        // TODO: update firestore entry
+        try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
         updateListEntry(oldItem: item, newItem: newItem)
     }
     
@@ -222,7 +218,7 @@ class TaskViewModel: ObservableObject {
             if (newItem.type == "daily") {
                 if var list = self.inactiveDailyTaskList {
                     list.removeAll { $0 == oldItem }
-                    self.activeDailyTaskList = list
+                    self.inactiveDailyTaskList = list
                 }
                 self.activeDailyTaskList?.append(newItem)
             } else if (newItem.type == "weekly") {
@@ -266,35 +262,32 @@ class TaskViewModel: ObservableObject {
     // try not to use async, see coin manager
     // first check if oldName exists -> if yes, then directly get id from itemNameToId
     // else delete old entry from dict, and add new name
-    func updateTaskItemInFirestore(oldName: String, item: TaskItem) {
-        /*
-        if self.uid == "" {
-            guard case let self.uid = Auth.auth().currentUser?.uid else {
-                print("Something went wrong wuwuwu taskVM \(self.uid)")
-                return
-            }
-        }
-        print("update task item in firestore")
-        // check if document doesn't exist, add another
-        let collection = db.collection("coins")
-        let documentReference = collection.document(self.uid)
-        documentReference.getDocument { (document, error) in
-            if let error = error {
-                print("DEBUG: failed to fetch coin doc with error \(error.localizedDescription)")
-            } else {
-                // Check if the document exists
-                if let document = document, document.exists {
-                    // Document exists -> update document
-                    documentReference.updateData([
-                        "total_coins": self.coins,
-                    ]) { error in
-                        if let error = error {
-                            print("DEBUG: Error updating coin document: \(error)")
-                        }
-                    }
+    func updateTaskItemInFirestore(oldItem: TaskItem, newItem: TaskItem) throws -> String {
+        if (newItem.type == "once" && newItem.count_cur == newItem.count_goal) {
+            // get id of the shop_item from the dict
+            let itemId = itemNameToId[oldItem.name]
+            let docRef = Firestore.firestore().collection("task_items").document(itemId ?? "")
+            docRef.delete { error in
+                if let error = error {
+                    print("DEBUG: Error deleting task item doc: \(error)")
                 }
             }
-        }*/
+            // remove the id from user shop doc
+            let userTaskDocRef = db.collection("user_shop").document(self.uid)
+            Task {
+                try await userTaskDocRef.updateData([
+                  "task_item_list": FieldValue.arrayRemove([itemId])
+                ])
+            }
+        } else {
+            let encodedNewItem = try Firestore.Encoder().encode(newItem)
+            db.collection("task_items").document(self.itemNameToId[oldItem.name] ?? "").setData(encodedNewItem) { error in
+                if let error = error {
+                    print("DEBUG: Error adding user shop document: \(error)")
+                }
+            }
+        }
+        return ""
     }
 
     // separated the day by 4am
@@ -323,13 +316,5 @@ class TaskViewModel: ObservableObject {
         print("inactive list:")
         print("\(self.inactiveBonusTaskList) \(self.inactiveDailyTaskList) \(self.inactiveWeeklyTaskList)")
         print("---------------")
-    }
-    
-    func updateActiveTaskList() {
-        //self.activeTaskList = (self.activeBonusTaskList) ?? [] + (self.activeOnceTaskList) ?? [] + (self.activeDailyTaskList) ?? [] + (self.activeWeeklyTaskList) ?? []
-    }
-    
-    func updateInactiveTaskList() {
-       // self.inactiveTaskList = (self.inactiveBonusTaskList) ?? [] + (self.inactiveDailyTaskList) ?? [] + (self.inactiveWeeklyTaskList) ?? []
     }
 }
