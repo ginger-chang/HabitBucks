@@ -62,7 +62,6 @@ struct ContentView: View {
                     }
                     .edgesIgnoringSafeArea(.top)
                     .task {
-                        TaskViewModel.shared = .init()
                         await CoinManager.shared.setupSubscription()
                         await ShopViewModel.shared.asyncSetup()
                         await TaskViewModel.shared.asyncSetup()

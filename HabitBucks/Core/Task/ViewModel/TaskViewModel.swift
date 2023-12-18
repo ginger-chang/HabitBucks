@@ -110,6 +110,7 @@ class TaskViewModel: ObservableObject {
     func fetchTaskList() async {
         print("fetch task list")
         let docRef = self.db.collection("user_tasks").document(self.uid)
+        print("task got uid \(self.uid)")
         docRef.getDocument { (document, error) in
             if let error = error {
                 print("DEBUG: task view model fetch task item list failed \(error.localizedDescription)")
@@ -169,6 +170,31 @@ class TaskViewModel: ObservableObject {
                 // Document does not exist
                 print("DEBUG: fetch shop item user shop doesn't exist")
             }
+        }
+    }
+    
+    func addTask(item: TaskItem) async {
+        print("add task: \(item)")
+        // add locally
+        DispatchQueue.main.async {
+            if (item.type == "once") {
+                self.activeOnceTaskList?.append(item)
+            } else if (item.type == "daily") {
+                self.activeDailyTaskList?.append(item)
+            } else if (item.type == "weekly") {
+                self.activeWeeklyTaskList?.append(item)
+            }
+        }
+        // add to firestore & append to firestore array
+        do {
+            let id = try await storeTaskItemToFirestore(item: item)
+            itemNameToId[item.name] = id
+            let docRef = self.db.collection("user_tasks").document(self.uid)
+            try await docRef.updateData([
+                "task_item_list": FieldValue.arrayUnion([id])
+            ])
+        } catch {
+            print("DEBUG: fail to append task id to firestore, \(error.localizedDescription)")
         }
     }
     

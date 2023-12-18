@@ -13,6 +13,7 @@ struct HabitBucksApp: App {
     @StateObject var authViewModel = AuthViewModel.shared
     @StateObject var coinManager = CoinManager.shared
     @StateObject var shopViewModel = ShopViewModel.shared
+    @StateObject var taskViewModel = TaskViewModel.shared
     
     init() {
         FirebaseApp.configure()
@@ -24,6 +25,7 @@ struct HabitBucksApp: App {
                 .environmentObject(authViewModel)
                 .environmentObject(coinManager)
                 .environmentObject(shopViewModel)
+                .environmentObject(taskViewModel)
         }
     }
 }
