@@ -17,6 +17,10 @@ struct AddTaskView: View {
     @State private var update = [false, false, false, false, false, false, false]
     @State private var view = [false, false, false, false, false, false, false]
     @State private var recurrence: String = ""
+    let allFalse = [false, false, false, false, false, false, false]
+    let allTrue = [true, true, true, true, true, true, true]
+    let sundayTrue = [true, false, false, false, false, false, false]
+    let mondayTrue = [false, true, false, false, false, false, false]
     
     var body: some View {
         VStack {
@@ -66,12 +70,26 @@ struct AddTaskView: View {
                 .padding(.top, 5)
                 
                 Button {
-                    // let newItem = TaskItem()
+                    var newItem: TaskItem
+                    if (recurrence == "once") {
+                        newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "once", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.allFalse, view: self.allTrue)
+                    } else if (recurrence == "daily") {
+                        newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "daily", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.allTrue, view: self.allTrue)
+                    } else if (recurrence == "weekly0") {
+                        newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "weekly", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.sundayTrue, view: self.allTrue)
+                    } else if (recurrence == "weekly1") {
+                        newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "weekly", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.mondayTrue, view: self.allTrue)
+                    } else { // custom
+                        if (self.update == self.allTrue) {
+                            // update is all true, store as daily
+                            newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "daily", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.update, view: self.view)
+                        } else {
+                            // store as weekly
+                            newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "weekly", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.update, view: self.view)
+                        }
+                    }
                     Task {
-                        print("add new item~ ")
-                        print("update is \(update)")
-                        print("view is \(view)")
-                        print("selected \(recurrence)")
+                        print("add new item~ \(newItem)")
                     }
                     dismiss()
                 } label: {
