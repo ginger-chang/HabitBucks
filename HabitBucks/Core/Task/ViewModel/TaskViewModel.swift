@@ -40,7 +40,7 @@ class TaskViewModel: ObservableObject {
         self.inactiveDailyTaskList = []
         self.inactiveWeeklyTaskList = []
         self.uid = ""
-        self.bonusStatus = false
+        self.bonusStatus = true
     }
     
     // This is called only when the user creates an account & need to set up documents
@@ -201,15 +201,28 @@ class TaskViewModel: ObservableObject {
         }
     }
     
+    func resetBonus(item: TaskItem) {
+        self.activeBonusTaskList = [item]
+        self.inactiveBonusTaskList = []
+        self.bonusStatus = true
+        let userTaskDocRef = db.collection("user_tasks").document(self.uid)
+        CoinManager.shared.minusCoins(n: item.reward)
+        Task {
+            try await userTaskDocRef.updateData([
+                "bonus_status": true
+            ])
+        }
+    }
+    
     func completeBonus(item: TaskItem) {
         self.activeBonusTaskList = []
         self.inactiveBonusTaskList = [item]
-        self.bonusStatus = true
+        self.bonusStatus = false
         let userTaskDocRef = db.collection("user_tasks").document(self.uid)
         CoinManager.shared.addCoins(n: item.reward)
         Task {
             try await userTaskDocRef.updateData([
-                "bonus_status": true
+                "bonus_status": false
             ])
         }
     }
@@ -230,6 +243,10 @@ class TaskViewModel: ObservableObject {
     
     // count_cur = 0
     func resetTask(item: TaskItem) {
+        if (item.type == "bonus") {
+            resetBonus(item: item)
+            return
+        }
         print("reset task!! \(item.name)")
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: 0, update: item.update, view: item.view)
         CoinManager.shared.minusCoins(n: item.reward * item.count_cur)

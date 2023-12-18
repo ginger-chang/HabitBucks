@@ -12,7 +12,7 @@ struct TaskItemView: View {
     
     let item: TaskItem
     var mainColor: Color {
-        if item.count_cur == item.count_goal || (item.type == "bonus" && taskViewModel.bonusStatus){
+        if item.count_cur == item.count_goal || (item.type == "bonus" && !taskViewModel.bonusStatus){
             return Color(.systemGray)
         } else if item.type == "daily" {
             return Color(.systemCyan)
@@ -32,7 +32,7 @@ struct TaskItemView: View {
         }
     }
     var completeButtonActive: Bool {
-        if (item.count_cur == item.count_goal || (item.type == "bonus" && taskViewModel.bonusStatus)) {
+        if (item.count_cur == item.count_goal || (item.type == "bonus" && !taskViewModel.bonusStatus)) {
             return false
         }
         return true
