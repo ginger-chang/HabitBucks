@@ -95,6 +95,7 @@ class CoinManager: ObservableObject {
                     }
                 } else {
                     // Document does not exist -> add new document
+                    self.coins = 0
                     collection.document(self.uid).setData([
                         "total_coins": 0,
                     ]) { error in

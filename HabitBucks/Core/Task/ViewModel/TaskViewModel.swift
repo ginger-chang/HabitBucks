@@ -74,6 +74,9 @@ class TaskViewModel: ObservableObject {
             self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK]
             self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK]
             self.activeWeeklyTaskList = [TaskItem.DEFAULT_WEEKLY_TASK]
+            self.inactiveBonusTaskList = []
+            self.inactiveDailyTaskList = []
+            self.inactiveWeeklyTaskList = []
         }
     }
     

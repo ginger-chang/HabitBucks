@@ -12,7 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var coinManager: CoinManager
     @EnvironmentObject var shopViewModel: ShopViewModel
     @EnvironmentObject var taskViewModel: TaskViewModel
-    @State private var selectedTab = 2 // set default to task list
+    @State private var selectedTab = 1 // set default to task list
     // TODO: if i set this to profile what will happen?? breaks still...
     private var contentViewLoading = true
 
@@ -23,40 +23,25 @@ struct ContentView: View {
             } else {
                 if viewModel.userSession != nil && viewModel.currentUser != nil {
                     TabView(selection: $selectedTab) {
-                        AnalysisView()
-                            .tabItem {
-                                Image(systemName: "chart.pie.fill")
-                                Text("Analysis")
-                            }
-                            .tag(0)
-                        
-                        PomodoroView()
-                            .tabItem {
-                                Image(systemName: "timer")
-                                Text("Pomodoro")
-                            }
-                            .tag(1)
-                        
-                        TaskView()
-                            .tabItem {
-                                Image(systemName: "list.clipboard")
-                                Text("Tasks")
-                            }
-                            .tag(2)
                         
                         ShopView()
                             .tabItem {
                                 Image(systemName: "cart")
                                 Text("Shop")
                             }
-                            .tag(3)
-                        
+                            .tag(0)
+                        TaskView()
+                            .tabItem {
+                                Image(systemName: "list.clipboard")
+                                Text("Tasks")
+                            }
+                            .tag(1)
                         ProfileView()
                             .tabItem {
                                 Image(systemName: "person.crop.circle.fill")
                                 Text("Profile")
                             }
-                            .tag(4)
+                            .tag(2)
 
                         // Add more tabs as needed
                     }

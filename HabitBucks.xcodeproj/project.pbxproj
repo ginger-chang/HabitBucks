@@ -36,8 +36,6 @@
 		D2DC07D32B1EEA3B0038DBFC /* CoinManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07D22B1EEA3B0038DBFC /* CoinManager.swift */; };
 		D2DC07D52B1EEF930038DBFC /* Coin.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07D42B1EEF930038DBFC /* Coin.swift */; };
 		D2DC07DA2B1F2D140038DBFC /* TaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07D92B1F2D140038DBFC /* TaskView.swift */; };
-		D2DC07DD2B1F374C0038DBFC /* AnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07DC2B1F374C0038DBFC /* AnalysisView.swift */; };
-		D2DC07E02B1F37660038DBFC /* PomodoroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07DF2B1F37660038DBFC /* PomodoroView.swift */; };
 		D2DC07E22B2007150038DBFC /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E12B2007150038DBFC /* LoadingView.swift */; };
 		D2DC07E42B211D700038DBFC /* AddShopItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E32B211D700038DBFC /* AddShopItemView.swift */; };
 		D2DC07E62B21215F0038DBFC /* NumberInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC07E52B21215F0038DBFC /* NumberInputView.swift */; };
@@ -93,8 +91,6 @@
 		D2DC07D22B1EEA3B0038DBFC /* CoinManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinManager.swift; sourceTree = "<group>"; };
 		D2DC07D42B1EEF930038DBFC /* Coin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coin.swift; sourceTree = "<group>"; };
 		D2DC07D92B1F2D140038DBFC /* TaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskView.swift; sourceTree = "<group>"; };
-		D2DC07DC2B1F374C0038DBFC /* AnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalysisView.swift; sourceTree = "<group>"; };
-		D2DC07DF2B1F37660038DBFC /* PomodoroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PomodoroView.swift; sourceTree = "<group>"; };
 		D2DC07E12B2007150038DBFC /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		D2DC07E32B211D700038DBFC /* AddShopItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShopItemView.swift; sourceTree = "<group>"; };
 		D2DC07E52B21215F0038DBFC /* NumberInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberInputView.swift; sourceTree = "<group>"; };
@@ -218,8 +214,6 @@
 		D2DC07A72B1D908F0038DBFC /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				D2DC07DB2B1F37400038DBFC /* Analysis */,
-				D2DC07DE2B1F37570038DBFC /* Pomodoro */,
 				D2DC07D62B1F2CFC0038DBFC /* Task */,
 				D2DC07D22B1EEA3B0038DBFC /* CoinManager.swift */,
 				D2DC07C92B1E91470038DBFC /* Shop */,
@@ -334,22 +328,6 @@
 				D2DC07E72B214F3B0038DBFC /* TaskViewModel.swift */,
 			);
 			path = ViewModel;
-			sourceTree = "<group>";
-		};
-		D2DC07DB2B1F37400038DBFC /* Analysis */ = {
-			isa = PBXGroup;
-			children = (
-				D2DC07DC2B1F374C0038DBFC /* AnalysisView.swift */,
-			);
-			path = Analysis;
-			sourceTree = "<group>";
-		};
-		D2DC07DE2B1F37570038DBFC /* Pomodoro */ = {
-			isa = PBXGroup;
-			children = (
-				D2DC07DF2B1F37660038DBFC /* PomodoroView.swift */,
-			);
-			path = Pomodoro;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -503,7 +481,6 @@
 				D2DC077C2B1D8FA90038DBFC /* HabitBucksApp.swift in Sources */,
 				D2DC07DA2B1F2D140038DBFC /* TaskView.swift in Sources */,
 				D2DC07B72B1DA0710038DBFC /* User.swift in Sources */,
-				D2DC07E02B1F37660038DBFC /* PomodoroView.swift in Sources */,
 				D2DC07B32B1D9BDC0038DBFC /* ProfileView.swift in Sources */,
 				D2DC07E82B214F3B0038DBFC /* TaskViewModel.swift in Sources */,
 				D2DC07D12B1EDFF50038DBFC /* ShopViewModel.swift in Sources */,
@@ -515,7 +492,6 @@
 				D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */,
 				D2DC07F42B21745D0038DBFC /* TaskItem.swift in Sources */,
 				D2DC07F62B217A410038DBFC /* TaskItemView.swift in Sources */,
-				D2DC07DD2B1F374C0038DBFC /* AnalysisView.swift in Sources */,
 				D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */,
 				D2DC07E22B2007150038DBFC /* LoadingView.swift in Sources */,
 				D23EA3592B30265D00C9E436 /* DayInputView.swift in Sources */,
