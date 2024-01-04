@@ -38,6 +38,9 @@ struct TaskView: View {
                     }
                 }
                 .padding(.horizontal)
+                .onAppear {
+                    TaskViewModel.shared.checkUpdate()
+                }
                 
                 // MARK: activeTaskList
                 

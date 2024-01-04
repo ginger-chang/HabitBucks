@@ -21,6 +21,7 @@ class TaskViewModel: ObservableObject {
     @Published var inactiveBonusTaskList: [TaskItem]?
     @Published var inactiveDailyTaskList: [TaskItem]?
     @Published var inactiveWeeklyTaskList: [TaskItem]?
+    @Published var sleepingTaskList: [TaskItem]?
     @Published var bonusStatus: Bool
     // true = active; false = inactive
     
@@ -39,8 +40,68 @@ class TaskViewModel: ObservableObject {
         self.inactiveBonusTaskList = []
         self.inactiveDailyTaskList = []
         self.inactiveWeeklyTaskList = []
+        self.sleepingTaskList = []
         self.uid = ""
         self.bonusStatus = true
+    }
+    
+    func checkUpdate() {
+        let currentDate = currentLocalTime()
+        print("check update \(currentDate)")
+        let nu = needUpdate()
+        print("\(nu)")
+        if (needUpdate()) {
+            update(currentDate: currentDate)
+        }
+    }
+    
+    func needUpdate() -> Bool {
+        if let lastUpdate = UserDefaults.standard.object(forKey: "lastUpdate") as? Date {
+            // last update exists
+            let last4am = last4AM() // date object
+            print("check time \(last4am)")
+            if (lastUpdate < last4am) {
+                return true
+            }
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    func update(currentDate: Date) {
+        print("update!")
+        UserDefaults.standard.set(currentDate, forKey: "lastUpdate")
+    }
+
+    func currentLocalTime() -> Date {
+        let currentDate = Date()
+        let localTimeZone = TimeZone.current
+        return currentDate.addingTimeInterval(TimeInterval(localTimeZone.secondsFromGMT(for: currentDate)))
+    }
+    
+    func last4AM() -> Date {
+        let currentDate = Date()
+        let calendar = Calendar.current
+        let timeZone = TimeZone.current
+
+        var components = calendar.dateComponents(in: timeZone, from: currentDate)
+        
+        components.hour = 4
+        components.minute = 0
+        components.second = 0
+
+        guard let last4AM = calendar.date(from: components),
+              last4AM <= currentDate else {
+            components = calendar.dateComponents(in: timeZone, from: currentDate)
+            components.day = components.day! - 1
+            components.hour = 4
+            components.minute = 0
+            components.second = 0
+            return calendar.date(from: components)!
+        }
+
+        return last4AM.addingTimeInterval(TimeInterval(timeZone.secondsFromGMT(for: last4AM)))
     }
     
     // This is called only when the user creates an account & need to set up documents
@@ -395,25 +456,6 @@ class TaskViewModel: ObservableObject {
             }
         }
         return ""
-    }
-
-    // separated the day by 4am
-    // TODO: not sure if this is working
-    func getYYYYMMDD() -> String {
-        let currentDate = Date()
-        
-        let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: currentDate)
-        
-        // Set the custom start time (4am in this case)
-        let customStartTime = calendar.date(bySettingHour: 4, minute: 0, second: 0, of: startOfDay) ?? startOfDay
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd"
-        
-        let formattedDateString = dateFormatter.string(from: customStartTime)
-        
-        return formattedDateString
     }
     
     func printDebug() {
