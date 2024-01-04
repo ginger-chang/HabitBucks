@@ -14,14 +14,14 @@ import SwiftUI
 import Combine
 
 class TaskViewModel: ObservableObject {
-    @Published var activeBonusTaskList: [TaskItem]?
+    @Published var activeBonusTaskList: [TaskItem]? // colorful
     @Published var activeOnceTaskList: [TaskItem]?
     @Published var activeDailyTaskList: [TaskItem]?
     @Published var activeWeeklyTaskList: [TaskItem]?
-    @Published var inactiveBonusTaskList: [TaskItem]?
+    @Published var inactiveBonusTaskList: [TaskItem]? // gray
     @Published var inactiveDailyTaskList: [TaskItem]?
     @Published var inactiveWeeklyTaskList: [TaskItem]?
-    @Published var sleepingTaskList: [TaskItem]?
+    @Published var sleepingTaskList: [TaskItem]? // not shown
     @Published var bonusStatus: Bool
     // true = active; false = inactive
     
@@ -47,19 +47,22 @@ class TaskViewModel: ObservableObject {
     
     func checkUpdate() {
         let currentDate = currentLocalTime()
-        print("check update \(currentDate)")
-        let nu = needUpdate()
-        print("\(nu)")
-        if (needUpdate()) {
-            update(currentDate: currentDate)
+        print("cur date is \(currentDate)")
+        let nu = needUpdate(date: currentDate)
+        print("need update is \(nu)")
+        if (nu) {
+            Task {
+                print("in task update")
+                await update(currentDate: currentDate)
+            }
         }
     }
     
-    func needUpdate() -> Bool {
+    func needUpdate(date: Date) -> Bool {
         if let lastUpdate = UserDefaults.standard.object(forKey: "lastUpdate") as? Date {
             // last update exists
-            let last4am = last4AM() // date object
-            print("check time \(last4am)")
+            let last4am = last4AM(date: date) // date object
+            print("last update is \(lastUpdate), last4am is \(last4am)")
             if (lastUpdate < last4am) {
                 return true
             }
@@ -69,9 +72,138 @@ class TaskViewModel: ObservableObject {
         }
     }
     
-    func update(currentDate: Date) {
+    // Update (reset): for daily & weekly & bonus
+    func update(currentDate: Date) async {
         print("update!")
         UserDefaults.standard.set(currentDate, forKey: "lastUpdate")
+        // go through every single task item, set up "new" active/inactive/sleeping arrays, then reset self.xxx
+        // 1. view (control which arrs tasks should be in) 2. update (reset tasks)
+        let currentDay = getDay(date: currentDate)
+        print("today is \(currentDay)")
+        
+        // UPDATES first - this will make sure all entries in self.xxx is the new, updated version
+        if let taskArray = self.activeDailyTaskList {
+            for task in taskArray {
+                resetTask(item: task, minusCoin: false) // all update
+            }
+        }
+        if let taskArray = self.inactiveDailyTaskList {
+            for task in taskArray {
+                resetTask(item: task, minusCoin: false) // all update
+            }
+        }
+        if let taskArray = self.activeWeeklyTaskList {
+            for task in taskArray {
+                if (task.update[currentDay]) {
+                    resetTask(item: task, minusCoin: false)
+                }
+            }
+        }
+        if let taskArray = self.inactiveWeeklyTaskList {
+            for task in taskArray {
+                if (task.update[currentDay]) {
+                    resetTask(item: task, minusCoin: false)
+                }
+            }
+        }
+        if let taskArray = self.sleepingTaskList {
+            for task in taskArray {
+                if (task.update[currentDay]) {
+                    resetTask(item: task, minusCoin: false)
+                }
+            }
+        }
+        // VIEWS later
+        updateView(currentDate: currentDate)
+        
+        updateBonus()
+    }
+    
+    func updateView(currentDate: Date) {
+        let currentDay = getDay(date: currentDate)
+
+        // setting up new lists
+        var newActiveDailyTaskList : [TaskItem] = []
+        var newActiveWeeklyTaskList : [TaskItem] = []
+        var newInactiveWeeklyTaskList : [TaskItem] = []
+        var newSleepingTaskList : [TaskItem] = []
+        
+        if let taskArray = self.activeDailyTaskList {
+            for task in taskArray {
+                if (task.view[currentDay]) {
+                    newActiveDailyTaskList.append(task) // show
+                } else {
+                    newSleepingTaskList.append(task) // don't show
+                }
+            }
+        }
+        if let taskArray = self.inactiveDailyTaskList {
+            for task in taskArray {
+                if (task.view[currentDay]) {
+                    newActiveDailyTaskList.append(task) // show
+                } else {
+                    newSleepingTaskList.append(task) // don't show
+                }
+            }
+        }
+        // weekly
+        if let taskArray = self.activeWeeklyTaskList {
+            for task in taskArray {
+                if (task.view[currentDay]) {
+                    newActiveWeeklyTaskList.append(task)
+                } else {
+                    newSleepingTaskList.append(task)
+                }
+            }
+        }
+        if let taskArray = self.inactiveWeeklyTaskList {
+            for task in taskArray {
+                if (task.view[currentDay]) {
+                    newInactiveWeeklyTaskList.append(task)
+                } else {
+                    newSleepingTaskList.append(task)
+                }
+            }
+        }
+        // sleeping
+        if let taskArray = self.sleepingTaskList {
+            for task in taskArray {
+                if (task.view[currentDay]) {
+                    if (task.type == "daily") {
+                        newActiveDailyTaskList.append(task)
+                    } else if (task.type == "weekly") {
+                        if (task.count_cur == task.count_goal) {
+                            newInactiveWeeklyTaskList.append(task)
+                        } else {
+                            newActiveWeeklyTaskList.append(task)
+                        }
+                    }
+                } else {
+                    newSleepingTaskList.append(task)
+                }
+            }
+        }
+        // setting everything back
+        DispatchQueue.main.async {
+            self.activeDailyTaskList = newActiveDailyTaskList.sorted{ $0.name < $1.name }
+            self.activeWeeklyTaskList = newActiveWeeklyTaskList.sorted{ $0.name < $1.name }
+            self.inactiveWeeklyTaskList = newInactiveWeeklyTaskList.sorted{ $0.name < $1.name }
+            self.sleepingTaskList = newSleepingTaskList.sorted{ $0.name < $1.name }
+        }
+    }
+    
+    func updateBonus() {
+        print("also need to update bonus")
+    }
+    
+    func getDay(date: Date) -> Int {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.weekday], from: date)
+        var rtn = (components.weekday ?? 1) - 1
+        if (calendar.component(.hour, from: date) < 4) {
+            rtn = rtn + 6 % 7
+        }
+        return rtn
     }
 
     func currentLocalTime() -> Date {
@@ -80,28 +212,31 @@ class TaskViewModel: ObservableObject {
         return currentDate.addingTimeInterval(TimeInterval(localTimeZone.secondsFromGMT(for: currentDate)))
     }
     
-    func last4AM() -> Date {
-        let currentDate = Date()
-        let calendar = Calendar.current
-        let timeZone = TimeZone.current
+    func last4AM(date: Date) -> Date {
+        var calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+        calendar.timeZone = TimeZone(identifier: "GMT")!
 
-        var components = calendar.dateComponents(in: timeZone, from: currentDate)
-        
-        components.hour = 4
-        components.minute = 0
-        components.second = 0
+        // Set the time components to 4am
+        var targetComponents = DateComponents()
+        targetComponents.year = components.year
+        targetComponents.month = components.month
+        targetComponents.day = components.day
+        targetComponents.hour = 4
+        targetComponents.minute = 0
+        targetComponents.second = 0
 
-        guard let last4AM = calendar.date(from: components),
-              last4AM <= currentDate else {
-            components = calendar.dateComponents(in: timeZone, from: currentDate)
-            components.day = components.day! - 1
-            components.hour = 4
-            components.minute = 0
-            components.second = 0
-            return calendar.date(from: components)!
+        // Check if the given date is already after 4am
+        if let targetDate = calendar.date(from: targetComponents), date > targetDate {
+            return targetDate
         }
 
-        return last4AM.addingTimeInterval(TimeInterval(timeZone.secondsFromGMT(for: last4AM)))
+        // If the given date is before 4am, subtract one day and set the time to 4am
+        if let adjustedDate = calendar.date(byAdding: .day, value: -1, to: date) {
+            return calendar.date(bySettingHour: 4, minute: 0, second: 0, of: adjustedDate) ?? date
+        }
+
+        return date
     }
     
     // This is called only when the user creates an account & need to set up documents
@@ -226,7 +361,16 @@ class TaskViewModel: ObservableObject {
                                 }
                                 self.itemNameToId[item.name] = taskItemId
                             } else {
-                                print("DEBUG: fetch task item doesn't exist")
+                                print("DEBUG: fetch task item doesn't exist, id: \(taskItemId), delete taskId from user_tasks!")
+                                Task {
+                                    do {
+                                        try await docRef.updateData([
+                                            "task_item_list": FieldValue.arrayRemove([taskItemId])
+                                        ])
+                                    } catch {
+                                        print("DEBUG: error removing task item from user tasks list, \(error.localizedDescription)")
+                                    }
+                                }
                             }
                         }
                     }
@@ -238,6 +382,7 @@ class TaskViewModel: ObservableObject {
         }
     }
     
+    // TODO: manage inactive when adding new task items
     func addTask(item: TaskItem) async {
         // add locally
         DispatchQueue.main.async {
@@ -306,14 +451,19 @@ class TaskViewModel: ObservableObject {
     }
     
     // count_cur = 0
-    func resetTask(item: TaskItem) {
+    func resetTask(item: TaskItem, minusCoin: Bool) {
+        if (item.count_cur == 0) {
+            return
+        }
         if (item.type == "bonus") {
             resetBonus(item: item)
             return
         }
         print("reset task!! \(item.name)")
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: 0, update: item.update, view: item.view)
-        CoinManager.shared.minusCoins(n: item.reward * item.count_cur)
+        if minusCoin {
+            CoinManager.shared.minusCoins(n: item.reward * item.count_cur)
+        }
         try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
         updateListEntry(oldItem: item, newItem: newItem)
     }
@@ -358,6 +508,7 @@ class TaskViewModel: ObservableObject {
         }
     }
     
+    // TODO: ? add a bunch of dispatch queue main async's
     func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {
         if (newItem.count_cur == newItem.count_goal) {
             if (newItem.type == "once") {
@@ -464,6 +615,8 @@ class TaskViewModel: ObservableObject {
         print("\(self.activeBonusTaskList) \(self.activeOnceTaskList) \(self.activeDailyTaskList) \(self.activeWeeklyTaskList)")
         print("inactive list:")
         print("\(self.inactiveBonusTaskList) \(self.inactiveDailyTaskList) \(self.inactiveWeeklyTaskList)")
+        print("sleeping list:")
+        print("\(self.sleepingTaskList)")
         print("---------------")
     }
 }

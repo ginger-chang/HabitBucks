@@ -117,7 +117,7 @@ struct TaskItemView: View {
         // context menu for edit & delete
         .contextMenu {
             Button("Reset") {
-                TaskViewModel.shared.resetTask(item: item)
+                TaskViewModel.shared.resetTask(item: item, minusCoin: true)
             }
             if (contextMenuActive) {
                 Button("Edit") {
