@@ -36,6 +36,17 @@ struct TaskView: View {
                             .foregroundColor(.blue)
                             .imageScale(.large)
                     }
+                    Button {
+                        TaskViewModel.shared.printDebug()
+                    } label: {
+                        Text("DEBUG")
+                    }
+                    Button {
+                        TaskViewModel.shared.resetLastUpdate()
+                    } label: {
+                        Text("resetLastU")
+                    }
+
                 }
                 .padding(.horizontal)
                 .onAppear {
@@ -55,6 +66,9 @@ struct TaskView: View {
                             TaskListView(taskItemList: TaskViewModel.shared.inactiveWeeklyTaskList)
                         }
                         .padding()
+                    }
+                    .refreshable {
+                        TaskViewModel.shared.checkUpdate()
                     }
                 
                 

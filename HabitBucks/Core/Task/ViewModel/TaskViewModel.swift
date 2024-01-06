@@ -3,7 +3,7 @@
 //  HabitBucks
 //
 //  Created by Ginger Chang on 12/6/23.
-//
+// Next time: 1/23
 
 import Foundation
 import Firebase
@@ -50,30 +50,51 @@ class TaskViewModel: ObservableObject {
         print("cur date is \(currentDate)")
         let nu = needUpdate(date: currentDate)
         print("need update is \(nu)")
-        if (nu) {
+        if (nu > 0) {
             Task {
                 print("in task update")
-                await update(currentDate: currentDate)
+                await update(currentDate: currentDate, daysSince: nu)
             }
         }
     }
     
-    func needUpdate(date: Date) -> Bool {
+    func needUpdate(date: Date) -> Int {
         if let lastUpdate = UserDefaults.standard.object(forKey: "lastUpdate") as? Date {
             // last update exists
             let last4am = last4AM(date: date) // date object
             print("last update is \(lastUpdate), last4am is \(last4am)")
             if (lastUpdate < last4am) {
-                return true
+                let calendar = Calendar.current
+                let dateComponents = calendar.dateComponents([.day], from: lastUpdate, to: last4am)
+                if let days = dateComponents.day {
+                    return min(abs(days) + 1, 7) // + 6 % 7
+                } else {
+                    return 1
+                }
             }
-            return false
+            return 0
         } else {
-            return true
+            return 1
         }
     }
     
+    func updateSince(updateArray: [Bool], daysSince: Int, currentDay: Int) -> Bool {
+        var rtn = false
+        var cd = currentDay
+        for _ in 0..<daysSince {
+            rtn = rtn || updateArray[cd]
+            cd = (cd + 6) % 7
+        }
+        return rtn
+    }
+    
+    func resetLastUpdate() {
+        let currentDate = currentLocalTime()
+        UserDefaults.standard.set(currentDate, forKey: "lastUpdate")
+    }
+    
     // Update (reset): for daily & weekly & bonus
-    func update(currentDate: Date) async {
+    func update(currentDate: Date, daysSince: Int) async {
         print("update!")
         UserDefaults.standard.set(currentDate, forKey: "lastUpdate")
         // go through every single task item, set up "new" active/inactive/sleeping arrays, then reset self.xxx
@@ -94,22 +115,22 @@ class TaskViewModel: ObservableObject {
         }
         if let taskArray = self.activeWeeklyTaskList {
             for task in taskArray {
-                if (task.update[currentDay]) {
+                if (updateSince(updateArray: task.update, daysSince: daysSince, currentDay: currentDay)) {
                     resetTask(item: task, minusCoin: false)
                 }
             }
         }
         if let taskArray = self.inactiveWeeklyTaskList {
             for task in taskArray {
-                if (task.update[currentDay]) {
+                if (updateSince(updateArray: task.update, daysSince: daysSince, currentDay: currentDay)) {
                     resetTask(item: task, minusCoin: false)
                 }
             }
         }
         if let taskArray = self.sleepingTaskList {
             for task in taskArray {
-                if (task.update[currentDay]) {
-                    resetTask(item: task, minusCoin: false)
+                if (updateSince(updateArray: task.update, daysSince: daysSince, currentDay: currentDay)) {
+                    updateSleeping(item: task)
                 }
             }
         }
@@ -117,6 +138,17 @@ class TaskViewModel: ObservableObject {
         updateView(currentDate: currentDate)
         
         updateBonus()
+    }
+    
+    func updateSleeping(item: TaskItem) {
+        let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: 0, update: item.update, view: item.view)
+        try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
+        if var list = self.sleepingTaskList {
+            list.removeAll{ $0 == item }
+            list.append(newItem)
+            self.sleepingTaskList = list
+        }
+        
     }
     
     func updateView(currentDate: Date) {
@@ -188,7 +220,7 @@ class TaskViewModel: ObservableObject {
             self.activeDailyTaskList = newActiveDailyTaskList.sorted{ $0.name < $1.name }
             self.activeWeeklyTaskList = newActiveWeeklyTaskList.sorted{ $0.name < $1.name }
             self.inactiveWeeklyTaskList = newInactiveWeeklyTaskList.sorted{ $0.name < $1.name }
-            self.sleepingTaskList = newSleepingTaskList.sorted{ $0.name < $1.name }
+            self.sleepingTaskList = newSleepingTaskList
         }
     }
     
@@ -319,6 +351,7 @@ class TaskViewModel: ObservableObject {
                 Task {
                     // TODO: fetch bonus
                     let taskIdList = document.get("task_item_list") as? [String]
+                    let currentDay = self.getDay(date: self.currentLocalTime())
                     var newActiveOnceList: [TaskItem] = []
                     var newActiveDailyList: [TaskItem] = []
                     var newActiveWeeklyList: [TaskItem] = []
@@ -339,7 +372,9 @@ class TaskViewModel: ObservableObject {
                                 let itemUpdate = doc.get("update") as? [Bool] ?? []
                                 let itemView = doc.get("view") as? [Bool] ?? []
                                 let item = TaskItem(emoji: itemEmoji, name: itemName, reward: itemReward, type: itemType, count_goal: itemCountGoal, count_cur: itemCountCur, update: itemUpdate, view: itemView)
-                                if (itemCountCur == itemCountGoal) { // INACTIVE
+                                if (!itemView[currentDay]) {
+                                    self.sleepingTaskList?.append(item)
+                                } else if (itemCountCur == itemCountGoal) { // INACTIVE
                                     if (itemType == "daily") {
                                         newInactiveDailyList.append(item)
                                         self.inactiveDailyTaskList = newInactiveDailyList.sorted{ $0.name < $1.name }
@@ -411,6 +446,7 @@ class TaskViewModel: ObservableObject {
     }
     
     func resetBonus(item: TaskItem) {
+        print("reset bonus!")
         self.activeBonusTaskList = [item]
         self.inactiveBonusTaskList = []
         self.bonusStatus = true
@@ -445,18 +481,18 @@ class TaskViewModel: ObservableObject {
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: item.count_cur + 1, update: item.update, view: item.view)
         print("newItem: \(newItem)")
         CoinManager.shared.addCoins(n: item.reward)
-        // TODO: update firestore entry
         try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
         updateListEntry(oldItem: item, newItem: newItem)
     }
     
     // count_cur = 0
     func resetTask(item: TaskItem, minusCoin: Bool) {
-        if (item.count_cur == 0) {
+        if (item.type == "bonus") {
+            print("reset bonus task plzplzplz")
+            resetBonus(item: item)
             return
         }
-        if (item.type == "bonus") {
-            resetBonus(item: item)
+        if (item.count_cur == 0) {
             return
         }
         print("reset task!! \(item.name)")
@@ -510,7 +546,9 @@ class TaskViewModel: ObservableObject {
     
     // TODO: ? add a bunch of dispatch queue main async's
     func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {
+        print("trying to update list entry")
         if (newItem.count_cur == newItem.count_goal) {
+            // complete
             if (newItem.type == "once") {
                 if var list = self.activeOnceTaskList {
                     list.removeAll { $0 == oldItem }
@@ -548,6 +586,7 @@ class TaskViewModel: ObservableObject {
                 self.activeWeeklyTaskList = self.activeWeeklyTaskList?.sorted{ $0.name < $1.name }
             }
         } else {
+            // add progress
             if (newItem.type == "once") {
                 if var list = self.activeOnceTaskList {
                     list.removeAll { $0 == oldItem }
