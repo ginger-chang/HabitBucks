@@ -13,6 +13,7 @@ import FirebaseFirestoreSwift
 import SwiftUI
 import Combine
 
+@MainActor
 class TaskViewModel: ObservableObject {
     @Published var activeBonusTaskList: [TaskItem]? // colorful
     @Published var activeOnceTaskList: [TaskItem]?
