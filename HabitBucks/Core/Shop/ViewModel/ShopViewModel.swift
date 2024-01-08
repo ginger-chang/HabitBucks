@@ -13,6 +13,10 @@ import FirebaseFirestoreSwift
 import SwiftUI
 import Combine
 
+protocol ShopItemFormProtocol {
+    var formIsValid: Bool { get }
+}
+
 class ShopViewModel: ObservableObject {
     //@Published var
     @Published var showAlert = false

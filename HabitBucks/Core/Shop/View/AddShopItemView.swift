@@ -28,6 +28,12 @@ struct AddShopItemView: View {
                     text: $emoji,
                     title: "Emoji",
                     placeholder: "🍿")
+                .onChange(of: emoji) { newValue in
+                    // Limit to one character
+                    if newValue.count > 1 {
+                        emoji = String(newValue.prefix(1))
+                    }
+                }
                 InputView(
                     text: $name,
                     title: "Name",
@@ -57,9 +63,20 @@ struct AddShopItemView: View {
             .background(Color(.systemBlue))
             .cornerRadius(10)
             .padding(.top)
+            .disabled(!formIsValid)
+            .opacity(formIsValid ? 1.0 : 0.5)
             
             Spacer()
         }
+    }
+}
+
+extension AddShopItemView: ShopItemFormProtocol {
+    var formIsValid: Bool {
+        return emoji.count == 1
+        && !name.isEmpty
+        && !shopViewModel.itemNameToId.keys.contains(name)
+        && !price.isEmpty
     }
 }
 
