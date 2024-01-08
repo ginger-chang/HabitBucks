@@ -95,7 +95,8 @@ class AuthViewModel: ObservableObject {
             return
         }
         self.currentUser = try? snapshot.data(as: User.self)
-        self.isLoading = false
+        await TaskViewModel.shared.asyncSetup()
+            //self.isLoading = false
         print("DEBUG: current user is \(self.currentUser)")
     }
     
@@ -113,5 +114,9 @@ class AuthViewModel: ObservableObject {
             message: Text("Email or password is invalid."),
             dismissButton: .default(Text("OK"))
         )
+    }
+    
+    func loadingDone() {
+        self.isLoading = false
     }
 }

@@ -120,9 +120,6 @@ struct TaskItemView: View {
                 TaskViewModel.shared.resetTask(item: item, minusCoin: true)
             }
             if (contextMenuActive) {
-                Button("Edit") {
-                    print("Edit \(item.name)")
-                }
                 Button("Delete") {
                     Task {
                         await TaskViewModel.shared.deleteTask(item: item)

@@ -52,9 +52,6 @@ struct ShopItemView: View {
         .buttonStyle(PlainButtonStyle())
         // context menu for edit & delete
         .contextMenu {
-            Button("Edit") {
-                print("Edit \(item.name)")
-            }
             Button("Delete") {
                 print("Delete \(item.name)")
                 Task {

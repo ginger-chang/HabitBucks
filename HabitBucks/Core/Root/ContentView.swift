@@ -49,8 +49,6 @@ struct ContentView: View {
                     .task {
                         await CoinManager.shared.setupSubscription()
                         await ShopViewModel.shared.asyncSetup()
-                        await TaskViewModel.shared.asyncSetup()
-                        // TODO: add more fetch stuff here!?
                     }
                 } else {
                     LoginView()

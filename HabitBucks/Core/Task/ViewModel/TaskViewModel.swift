@@ -392,12 +392,11 @@ class TaskViewModel: ObservableObject {
             } else if let document = document, document.exists {
                 Task {
                     // TODO: fetch bonus
-                    
                     // Bonus task
                     let bonusId = self.getBonusId()
                     print("bonus id is \(bonusId)")
                     let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
-                    try await bonusDocRef.getDocument { (doc, error) in
+                    bonusDocRef.getDocument { (doc, error) in
                         if let error = error {
                             print("DEBUG: fetch bonus task failed, \(error.localizedDescription)")
                             self.activeBonusTaskList = []
@@ -415,7 +414,6 @@ class TaskViewModel: ObservableObject {
                             } else {
                                 self.inactiveBonusTaskList?.append(bonus)
                             }
-                            
                         }
                     }
                     
@@ -427,10 +425,13 @@ class TaskViewModel: ObservableObject {
                     var newActiveWeeklyList: [TaskItem] = []
                     var newInactiveDailyList: [TaskItem] = []
                     var newInactiveWeeklyList: [TaskItem] = []
+                    var progress = 0
+                    var progress_goal = taskIdList?.count ?? 0
                     for taskItemId in taskIdList ?? [] {
                         let taskItemDocRef = self.db.collection("task_items").document(taskItemId)
-                        try await taskItemDocRef.getDocument { (doc, error) in
+                        taskItemDocRef.getDocument { (doc, error) in
                             if let error = error {
+                                progress += 1
                                 print("DEBUG: fetch shop item list failed - can't get item \(error.localizedDescription)")
                             } else if let doc = doc, doc.exists {
                                 let itemEmoji = doc.get("emoji") as? String ?? "❌"
@@ -465,7 +466,9 @@ class TaskViewModel: ObservableObject {
                                     }
                                 }
                                 self.itemNameToId[item.name] = taskItemId
+                                progress += 1
                             } else {
+                                progress += 1
                                 print("DEBUG: fetch task item doesn't exist, id: \(taskItemId), delete taskId from user_tasks!")
                                 Task {
                                     do {
@@ -476,6 +479,10 @@ class TaskViewModel: ObservableObject {
                                         print("DEBUG: error removing task item from user tasks list, \(error.localizedDescription)")
                                     }
                                 }
+                            }
+                            if (progress == progress_goal) {
+                                print("finish loading! \(progress)/\(progress_goal)")
+                                AuthViewModel.shared.loadingDone()
                             }
                         }
                     }
