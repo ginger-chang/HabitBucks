@@ -86,15 +86,16 @@ struct AddTaskView: View {
                         } else if (self.update == self.allFalse) {
                             // update is all false, store as once
                             newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "once", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.update, view: self.view)
-
                         } else {
                             // store as weekly
                             newItem = TaskItem(emoji: self.emoji, name: self.name, reward: Int(self.reward) ?? 0, type: "weekly", count_goal: Int(self.count_goal) ?? 1, count_cur: 0, update: self.update, view: self.view)
                         }
                     }
                     Task {
-                        print("add new item~ \(newItem)")
-                        await taskViewModel.addTask(item: newItem)
+                        if (newItem.view != self.allFalse) {
+                            print("add new item~ \(newItem)")
+                            await taskViewModel.addTask(item: newItem)
+                        }
                     }
                     dismiss()
                 } label: {

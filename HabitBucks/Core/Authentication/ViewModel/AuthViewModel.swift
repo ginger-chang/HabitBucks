@@ -10,6 +10,7 @@ import Firebase
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import SwiftUI
 
 protocol AuthenticationFormProtocol {
     var formIsValid: Bool { get }
@@ -20,6 +21,8 @@ class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     @Published var isLoading = true
+    @Published var signInAlert = false
+    @Published var createAccountAlert = false
     
     static let shared = AuthViewModel()
     
@@ -43,6 +46,9 @@ class AuthViewModel: ObservableObject {
             await fetchUser() // sets self.currentUser
         } catch {
             print("DEBUG: failed to login with error \(error)")
+            self.signInAlert = true
+            self.createAccountAlert = false
+            
         }
     }
     
@@ -58,6 +64,8 @@ class AuthViewModel: ObservableObject {
             //await ShopViewModel.shared.createShop()
         } catch {
             print("DEBUG: failed to create user with error \(error.localizedDescription)")
+            self.createAccountAlert = true
+            self.signInAlert = false
         }
     }
     
@@ -89,5 +97,21 @@ class AuthViewModel: ObservableObject {
         self.currentUser = try? snapshot.data(as: User.self)
         self.isLoading = false
         print("DEBUG: current user is \(self.currentUser)")
+    }
+    
+    func constructSignInAlert() -> Alert {
+        return Alert(
+            title: Text("Sign In Failed"),
+            message: Text("Email or password is incorrect."),
+            dismissButton: .default(Text("OK"))
+        )
+    }
+    
+    func constructCreateAccountAlert() -> Alert {
+        return Alert(
+            title: Text("Account Create Failed"),
+            message: Text("Email or password is invalid."),
+            dismissButton: .default(Text("OK"))
+        )
     }
 }

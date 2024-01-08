@@ -73,6 +73,9 @@ struct LoginView: View {
                     }
                     .font(.system(size: 14))
                 }
+                .alert(isPresented: $viewModel.signInAlert) {
+                    return viewModel.constructSignInAlert()
+                }
             }
         }
     }

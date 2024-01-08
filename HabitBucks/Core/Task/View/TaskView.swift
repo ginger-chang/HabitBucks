@@ -36,6 +36,7 @@ struct TaskView: View {
                             .foregroundColor(.blue)
                             .imageScale(.large)
                     }
+                    /*
                     Button {
                         TaskViewModel.shared.printDebug()
                     } label: {
@@ -46,7 +47,7 @@ struct TaskView: View {
                     } label: {
                         Text("resetLastU")
                     }
-
+                    */
                 }
                 .padding(.horizontal)
                 .onAppear {

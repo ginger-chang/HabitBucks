@@ -34,7 +34,8 @@ class TaskViewModel: ObservableObject {
     static var shared = TaskViewModel()
     
     init() {
-        self.activeBonusTaskList = [TaskItem.MOCK_BONUS_TASK_1]
+        print("init task vm")
+        self.activeBonusTaskList = []
         self.activeOnceTaskList = []
         self.activeDailyTaskList = []
         self.activeWeeklyTaskList = []
@@ -138,7 +139,7 @@ class TaskViewModel: ObservableObject {
         // VIEWS later
         updateView(currentDate: currentDate)
         
-        updateBonus()
+        await updateBonus()
     }
     
     func updateSleeping(item: TaskItem) {
@@ -225,7 +226,30 @@ class TaskViewModel: ObservableObject {
         }
     }
     
-    func updateBonus() {
+    func updateBonus() async {
+        self.bonusStatus = true
+        let userTaskDocRef = db.collection("user_tasks").document(self.uid)
+        Task {
+            try await userTaskDocRef.updateData([
+                "bonus_status": true
+            ])
+        }
+        let bonusId = getBonusId()
+        let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
+        await bonusDocRef.getDocument { (doc, error) in
+            if let doc = doc, doc.exists {
+                let bonusEmoji = doc.get("emoji") as? String ?? "❌"
+                let bonusName = doc.get("name") as? String ?? "Error"
+                print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
+                let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+                self.activeBonusTaskList = [bonus]
+                self.inactiveBonusTaskList = []
+            } else {
+                print("DEBUG: fetch bonus task failed, \(error?.localizedDescription)")
+                self.activeBonusTaskList = []
+                self.inactiveBonusTaskList = []
+            }
+        }
         print("also need to update bonus")
     }
     
@@ -234,7 +258,7 @@ class TaskViewModel: ObservableObject {
         let components = calendar.dateComponents([.weekday], from: date)
         var rtn = (components.weekday ?? 1) - 1
         if (calendar.component(.hour, from: date) < 4) {
-            rtn = rtn + 6 % 7
+            rtn = (rtn + 6) % 7
         }
         return rtn
     }
@@ -245,10 +269,18 @@ class TaskViewModel: ObservableObject {
         return currentDate.addingTimeInterval(TimeInterval(localTimeZone.secondsFromGMT(for: currentDate)))
     }
     
+    func getBonusId() -> String {
+        let currentDate = Date()
+        print("cur date is \(currentDate)!?!?!?")
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.string(from: currentDate)
+    }
+    
     func last4AM(date: Date) -> Date {
         var calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
         calendar.timeZone = TimeZone(identifier: "GMT")!
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
 
         // Set the time components to 4am
         var targetComponents = DateComponents()
@@ -260,12 +292,17 @@ class TaskViewModel: ObservableObject {
         targetComponents.second = 0
 
         // Check if the given date is already after 4am
-        if let targetDate = calendar.date(from: targetComponents), date > targetDate {
-            return targetDate
+        if let targetDate = calendar.date(from: targetComponents) {
+            print("date: \(date), target date: \(targetDate)")
+            if (date > targetDate) {
+                return targetDate
+            }
+            //return targetDate
         }
 
         // If the given date is before 4am, subtract one day and set the time to 4am
         if let adjustedDate = calendar.date(byAdding: .day, value: -1, to: date) {
+            print("date: \(date), adjusted date: \(adjustedDate)")
             return calendar.date(bySettingHour: 4, minute: 0, second: 0, of: adjustedDate) ?? date
         }
 
@@ -292,7 +329,7 @@ class TaskViewModel: ObservableObject {
         }
         // creating user_tasks
         db.collection("user_tasks").document(uid).setData([
-            "bonus_status": false, // Replace with the desired boolean value
+            "bonus_status": true, // Replace with the desired boolean value
             "task_item_list": taskIdArray
         ]) { error in
             if let error = error {
@@ -351,6 +388,34 @@ class TaskViewModel: ObservableObject {
             } else if let document = document, document.exists {
                 Task {
                     // TODO: fetch bonus
+                    
+                    // Bonus task
+                    let bonusId = self.getBonusId()
+                    print("bonus id is \(bonusId)")
+                    let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
+                    try await bonusDocRef.getDocument { (doc, error) in
+                        if let error = error {
+                            print("DEBUG: fetch bonus task failed, \(error.localizedDescription)")
+                            self.activeBonusTaskList = []
+                            self.inactiveBonusTaskList = []
+                            self.bonusStatus = true
+                        } else if let doc = doc, doc.exists {
+                            let bonusStatus = document.get("bonus_status") as? Bool
+                            self.bonusStatus = bonusStatus ?? true
+                            let bonusEmoji = doc.get("emoji") as? String ?? "❌"
+                            let bonusName = doc.get("name") as? String ?? "Error"
+                            print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
+                            let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+                            if (bonusStatus ?? true) {
+                                self.activeBonusTaskList?.append(bonus)
+                            } else {
+                                self.inactiveBonusTaskList?.append(bonus)
+                            }
+                            
+                        }
+                    }
+                    
+                    // Once, Daily, Weekly tasks
                     let taskIdList = document.get("task_item_list") as? [String]
                     let currentDay = self.getDay(date: self.currentLocalTime())
                     var newActiveOnceList: [TaskItem] = []
@@ -421,8 +486,11 @@ class TaskViewModel: ObservableObject {
     // TODO: manage inactive when adding new task items
     func addTask(item: TaskItem) async {
         // add locally
+        let currentDay = getDay(date: currentLocalTime())
         DispatchQueue.main.async {
-            if (item.type == "once") {
+            if (!item.view[currentDay]) {
+                self.sleepingTaskList?.append(item)
+            } else if (item.type == "once") {
                 self.activeOnceTaskList?.append(item)
                 self.activeOnceTaskList = self.activeOnceTaskList?.sorted{ $0.name < $1.name }
             } else if (item.type == "daily") {

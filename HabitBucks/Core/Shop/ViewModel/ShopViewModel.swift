@@ -147,12 +147,10 @@ class ShopViewModel: ObservableObject {
             showAlert = true
             sufficientAlert = true
             insufficientAlert = false
-            print("confirm alert is true, \(sufficientAlert), \(insufficientAlert)")
         } else {
             showAlert = true
             insufficientAlert = true
             sufficientAlert = false
-            print("insufficient alert is true, \(sufficientAlert), \(insufficientAlert)")
         }
     }
     

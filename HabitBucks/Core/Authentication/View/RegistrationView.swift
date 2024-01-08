@@ -87,6 +87,9 @@ struct RegistrationView: View {
                 .padding(.top)
                 .opacity(formIsValid ? 1.0 : 0.5)
                 .disabled(!formIsValid)
+                .alert(isPresented: $viewModel.createAccountAlert) {
+                    return viewModel.constructCreateAccountAlert()
+                }
                 
                 Spacer()
                 
