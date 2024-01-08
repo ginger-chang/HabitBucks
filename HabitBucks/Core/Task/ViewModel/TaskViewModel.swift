@@ -13,6 +13,10 @@ import FirebaseFirestoreSwift
 import SwiftUI
 import Combine
 
+protocol TaskFormProtocol {
+    var formIsValid: Bool { get }
+}
+
 @MainActor
 class TaskViewModel: ObservableObject {
     @Published var activeBonusTaskList: [TaskItem]? // colorful
@@ -28,7 +32,7 @@ class TaskViewModel: ObservableObject {
     
     private var uid: String
     private var db = Firestore.firestore()
-    private var itemNameToId: Dictionary<String, String> = [:]
+    var itemNameToId: Dictionary<String, String> = [:]
     private var cancellables: Set<AnyCancellable> = []
     
     static var shared = TaskViewModel()

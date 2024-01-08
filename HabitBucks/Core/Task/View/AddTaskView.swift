@@ -16,7 +16,7 @@ struct AddTaskView: View {
     @State private var count_goal = ""
     @State private var update = [false, false, false, false, false, false, false]
     @State private var view = [false, false, false, false, false, false, false]
-    @State private var recurrence: String = ""
+    @State private var recurrence: String = "once"
     let allFalse = [false, false, false, false, false, false, false]
     let allTrue = [true, true, true, true, true, true, true]
     let sundayTrue = [true, false, false, false, false, false, false]
@@ -109,10 +109,22 @@ struct AddTaskView: View {
                 .background(Color(.systemBlue))
                 .cornerRadius(10)
                 .padding(.top)
+                .disabled(!formIsValid)
+                .opacity(formIsValid ? 1.0 : 0.5)
             }
             .navigationBarTitle("Your Title", displayMode: .inline)
             Spacer()
         }
+    }
+}
+
+extension AddTaskView: TaskFormProtocol {
+    var formIsValid: Bool {
+        return emoji.count == 1
+        && !name.isEmpty
+        && !taskViewModel.itemNameToId.keys.contains(name)
+        && !reward.isEmpty
+        && !count_goal.isEmpty
     }
 }
 
