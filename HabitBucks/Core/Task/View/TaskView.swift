@@ -71,11 +71,10 @@ struct TaskView: View {
                     .refreshable {
                         TaskViewModel.shared.checkUpdate()
                     }
-                
-                
             }
             .padding(.top, 15)
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

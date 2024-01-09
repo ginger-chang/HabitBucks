@@ -72,7 +72,7 @@ struct ShopView: View {
             }
             .padding(.top, 15)
         }
-
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

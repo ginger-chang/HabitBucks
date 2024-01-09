@@ -232,29 +232,35 @@ class TaskViewModel: ObservableObject {
     
     func updateBonus() async {
         self.bonusStatus = true
-        let userTaskDocRef = db.collection("user_tasks").document(self.uid)
-        Task {
-            try await userTaskDocRef.updateData([
-                "bonus_status": true
-            ])
-        }
-        let bonusId = getBonusId()
-        let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
-        await bonusDocRef.getDocument { (doc, error) in
-            if let doc = doc, doc.exists {
-                let bonusEmoji = doc.get("emoji") as? String ?? "❌"
-                let bonusName = doc.get("name") as? String ?? "Error"
-                print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
-                let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
-                self.activeBonusTaskList = [bonus]
-                self.inactiveBonusTaskList = []
-            } else {
-                print("DEBUG: fetch bonus task failed, \(error?.localizedDescription)")
-                self.activeBonusTaskList = []
-                self.inactiveBonusTaskList = []
+        // TODO: check error
+        do {
+            let userTaskDocRef = self.db.collection("user_tasks").document(self.uid)
+            Task {
+                try await userTaskDocRef.updateData([
+                    "bonus_status": true
+                ])
             }
+            let bonusId = getBonusId()
+            let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
+            await bonusDocRef.getDocument { (doc, error) in
+                if let doc = doc, doc.exists {
+                    let bonusEmoji = doc.get("emoji") as? String ?? "❌"
+                    let bonusName = doc.get("name") as? String ?? "Error"
+                    print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
+                    let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+                    self.activeBonusTaskList = [bonus]
+                    self.inactiveBonusTaskList = []
+                } else {
+                    print("DEBUG: fetch bonus task failed, \(error?.localizedDescription)")
+                    self.activeBonusTaskList = []
+                    self.inactiveBonusTaskList = []
+                }
+            }
+            print("also need to update bonus")
+        } catch let error {
+            print("DEBUG: update bonus fail to get user_tasks, \(error.localizedDescription)")
+            return
         }
-        print("also need to update bonus")
     }
     
     func getDay(date: Date) -> Int {
