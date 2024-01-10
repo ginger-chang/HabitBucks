@@ -37,12 +37,12 @@ struct TaskView: View {
                             .imageScale(.large)
                     }
                     
+                    /*
                     Button {
                         TaskViewModel.shared.printDebug()
                     } label: {
                         Text("DEBUG")
                     }
-                    /*
                     Button {
                         TaskViewModel.shared.resetLastUpdate()
                     } label: {

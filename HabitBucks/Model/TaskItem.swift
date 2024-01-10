@@ -52,7 +52,7 @@ extension TaskItem {
                                             update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
     static var BONUS_1 = TaskItem(emoji: "💌", name: "Bonus Task: Tell someone you appreciate them", reward: 10, type: "bonus", count_goal: 1, count_cur: 0,
                                   update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
-    static var DEFAULT_ONCE_TASK = TaskItem(emoji: "📱", name: "Learn to use HabitBucks (Profile > How to use)", reward: 15, type: "once", count_goal: 1, count_cur: 0,
+    static var DEFAULT_ONCE_TASK = TaskItem(emoji: "📱", name: "Learn HabitBucks (Profile > How to use)", reward: 15, type: "once", count_goal: 1, count_cur: 0,
                                             update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
     static var DEFAULT_DAILY_TASK = TaskItem(emoji: "🥛", name: "Drink 2 cups of milk", reward: 5, type: "daily", count_goal: 2, count_cur: 0,
                                              update: [true, true, true, true, true, true, true], view: [true, true, true, true, true, true, true])

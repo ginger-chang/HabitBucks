@@ -15,7 +15,6 @@ struct HowToUseView: View {
             Image("icon")
                 .resizable()
                 .frame(width: 100, height: 100)
-                .padding(.top)
             Text("Turn tasks into treasures! HabitBucks: Where every completed task is a step closer to your rewards.")
                 .bold()
             List {
@@ -58,6 +57,7 @@ struct HowToUseView: View {
                 }
             }
             .cornerRadius(20)
+            .padding(.bottom)
         }
         .padding(.horizontal)
     }

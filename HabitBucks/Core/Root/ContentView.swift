@@ -13,7 +13,6 @@ struct ContentView: View {
     @EnvironmentObject var shopViewModel: ShopViewModel
     @EnvironmentObject var taskViewModel: TaskViewModel
     @State private var selectedTab = 1 // set default to task list
-    // TODO: if i set this to profile what will happen?? breaks still...
     private var contentViewLoading = true
 
     var body: some View {
