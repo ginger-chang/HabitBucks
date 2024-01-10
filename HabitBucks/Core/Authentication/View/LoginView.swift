@@ -11,6 +11,15 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var viewModel: AuthViewModel
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    var bannerImageHeight: CGFloat {
+        return horizontalSizeClass == .regular ? 270 : 120
+    }
+    
+    var inputFieldsPadding: CGFloat {
+        return horizontalSizeClass == .regular ? 50 : 12
+    }
     
     var body: some View {
         NavigationStack {
@@ -19,8 +28,8 @@ struct LoginView: View {
                 Image("banner")
                     .resizable()
                     .scaledToFill()
-                    .frame(height: 120)
-                    .padding(.vertical, 50)
+                    .frame(height: bannerImageHeight)
+                    .padding(.bottom, 70)
                 
                 // input fields
                 VStack(spacing: 24) {
@@ -36,7 +45,7 @@ struct LoginView: View {
                         isSecureField: true)
                 }
                 .padding(.horizontal)
-                .padding(.top, 12)
+                .padding(.top, inputFieldsPadding)
                 
                 // sign in
                 Button {
@@ -72,11 +81,13 @@ struct LoginView: View {
                             .fontWeight(.bold)
                     }
                     .font(.system(size: 14))
+                    .padding(.bottom)
                 }
                 .alert(isPresented: $viewModel.signInAlert) {
                     return viewModel.constructSignInAlert()
                 }
             }
+            
         }
     }
 }

@@ -56,6 +56,6 @@ extension TaskItem {
                                             update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
     static var DEFAULT_DAILY_TASK = TaskItem(emoji: "🥛", name: "Drink 2 cups of milk", reward: 5, type: "daily", count_goal: 2, count_cur: 0,
                                              update: [true, true, true, true, true, true, true], view: [true, true, true, true, true, true, true])
-    static var DEFAULT_WEEKLY_TASK = TaskItem(emoji: "👨‍👩‍👦", name: "Call parents", reward: 10, type: "weekly", count_goal: 3, count_cur: 1,
+    static var DEFAULT_WEEKLY_TASK = TaskItem(emoji: "👨‍👩‍👦", name: "Call parents", reward: 10, type: "weekly", count_goal: 3, count_cur: 0,
                                               update: [true, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
 }

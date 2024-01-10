@@ -353,6 +353,7 @@ class TaskViewModel: ObservableObject {
             self.inactiveBonusTaskList = []
             self.inactiveDailyTaskList = []
             self.inactiveWeeklyTaskList = []
+            AuthViewModel.shared.loadingDone()
         }
     }
     
