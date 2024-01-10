@@ -33,11 +33,6 @@ struct RegistrationView: View {
                         placeholder: "johndoe@example.com")
                         .autocapitalization(.none)
                     InputView(
-                        text: $username,
-                        title: "Username",
-                        placeholder: "johndoe123")
-                        .autocapitalization(.none)
-                    InputView(
                         text: $password,
                         title: "Password",
                         placeholder: "Enter your password",
@@ -71,7 +66,7 @@ struct RegistrationView: View {
                     Task {
                         try await viewModel.createUser(withEmail: email,
                                                        password: password,
-                                                       username: username)
+                                                       username: "")
                     }
                 } label: {
                     HStack {
@@ -118,9 +113,7 @@ extension RegistrationView: AuthenticationFormProtocol {
         && email.contains("@")
         && !password.isEmpty
         && password.count > 5
-        
         && confirmPassword == password
-        && !username.isEmpty
     }
 }
 

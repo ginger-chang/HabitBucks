@@ -36,12 +36,13 @@ struct TaskView: View {
                             .foregroundColor(.blue)
                             .imageScale(.large)
                     }
-                    /*
+                    
                     Button {
                         TaskViewModel.shared.printDebug()
                     } label: {
                         Text("DEBUG")
                     }
+                    /*
                     Button {
                         TaskViewModel.shared.resetLastUpdate()
                     } label: {
@@ -56,21 +57,21 @@ struct TaskView: View {
                 
                 // MARK: activeTaskList
                 
-                    ScrollView {
-                        LazyVStack(alignment: .center, spacing: 10) {
-                            TaskListView(taskItemList: TaskViewModel.shared.activeBonusTaskList)
-                            TaskListView(taskItemList: TaskViewModel.shared.activeOnceTaskList)
-                            TaskListView(taskItemList: TaskViewModel.shared.activeDailyTaskList)
-                            TaskListView(taskItemList: TaskViewModel.shared.activeWeeklyTaskList)
-                            TaskListView(taskItemList: TaskViewModel.shared.inactiveBonusTaskList)
-                            TaskListView(taskItemList: TaskViewModel.shared.inactiveDailyTaskList)
-                            TaskListView(taskItemList: TaskViewModel.shared.inactiveWeeklyTaskList)
-                        }
-                        .padding()
+                ScrollView {
+                    LazyVStack(alignment: .center, spacing: 10) {
+                        TaskListView(taskItemList: TaskViewModel.shared.activeBonusTaskList)
+                        TaskListView(taskItemList: TaskViewModel.shared.activeOnceTaskList)
+                        TaskListView(taskItemList: TaskViewModel.shared.activeDailyTaskList)
+                        TaskListView(taskItemList: TaskViewModel.shared.activeWeeklyTaskList)
+                        TaskListView(taskItemList: TaskViewModel.shared.inactiveBonusTaskList)
+                        TaskListView(taskItemList: TaskViewModel.shared.inactiveDailyTaskList)
+                        TaskListView(taskItemList: TaskViewModel.shared.inactiveWeeklyTaskList)
                     }
-                    .refreshable {
-                        TaskViewModel.shared.checkUpdate()
-                    }
+                    .padding()
+                }
+                .refreshable {
+                    TaskViewModel.shared.checkUpdate()
+                }
             }
             .padding(.top, 15)
         }

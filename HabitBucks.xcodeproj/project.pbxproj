@@ -10,6 +10,7 @@
 		D20CA7F82B2F531A00FFE005 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20CA7F72B2F531A00FFE005 /* TaskListView.swift */; };
 		D23EA3592B30265D00C9E436 /* DayInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23EA3582B30265D00C9E436 /* DayInputView.swift */; };
 		D23EA35B2B303A2900C9E436 /* RadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23EA35A2B303A2900C9E436 /* RadioButton.swift */; };
+		D2C6D11D2B4E87C9005814E6 /* HowToUseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C6D11C2B4E87C9005814E6 /* HowToUseView.swift */; };
 		D2DC077C2B1D8FA90038DBFC /* HabitBucksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */; };
 		D2DC077E2B1D8FA90038DBFC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC077D2B1D8FA90038DBFC /* ContentView.swift */; };
 		D2DC07802B1D8FAB0038DBFC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D2DC077F2B1D8FAB0038DBFC /* Assets.xcassets */; };
@@ -67,6 +68,7 @@
 		D23EA3582B30265D00C9E436 /* DayInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayInputView.swift; sourceTree = "<group>"; };
 		D23EA35A2B303A2900C9E436 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
 		D2C6D11B2B4E43FA005814E6 /* HabitBucks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HabitBucks.entitlements; sourceTree = "<group>"; };
+		D2C6D11C2B4E87C9005814E6 /* HowToUseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToUseView.swift; sourceTree = "<group>"; };
 		D2DC07782B1D8FA90038DBFC /* HabitBucks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitBucks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitBucksApp.swift; sourceTree = "<group>"; };
 		D2DC077D2B1D8FA90038DBFC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 			isa = PBXGroup;
 			children = (
 				D2DC07B22B1D9BDC0038DBFC /* ProfileView.swift */,
+				D2C6D11C2B4E87C9005814E6 /* HowToUseView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -493,6 +496,7 @@
 				D2DC07B52B1D9E010038DBFC /* SettingsRowView.swift in Sources */,
 				D2DC07CF2B1E92600038DBFC /* ShopItemView.swift in Sources */,
 				D2DC07F42B21745D0038DBFC /* TaskItem.swift in Sources */,
+				D2C6D11D2B4E87C9005814E6 /* HowToUseView.swift in Sources */,
 				D2DC07F62B217A410038DBFC /* TaskItemView.swift in Sources */,
 				D2DC07CD2B1E91610038DBFC /* ShopView.swift in Sources */,
 				D2DC07E22B2007150038DBFC /* LoadingView.swift in Sources */,

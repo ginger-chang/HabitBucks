@@ -132,7 +132,7 @@ struct TaskItemView: View {
 
 struct TaskItemView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskItemView(item: TaskItem.BONUS_1)
+        TaskItemView(item: TaskItem.DEFAULT_ONCE_TASK)
             .environmentObject(TaskViewModel())
     }
 }

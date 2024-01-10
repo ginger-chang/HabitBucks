@@ -417,9 +417,11 @@ class TaskViewModel: ObservableObject {
                             print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                             let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                             if (bonusStatus ?? true) {
-                                self.activeBonusTaskList?.append(bonus)
+                                self.activeBonusTaskList = [bonus]
+                                self.inactiveBonusTaskList = []
                             } else {
-                                self.inactiveBonusTaskList?.append(bonus)
+                                self.activeBonusTaskList = []
+                                self.inactiveBonusTaskList = [bonus]
                             }
                         }
                     }

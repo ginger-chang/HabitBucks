@@ -27,7 +27,7 @@ extension ShopItem {
     static var MOCK_SHOP_ITEM_5 = ShopItem(name: "Sleep until happy", price: 11, emoji: "🛌", createdTime: Date())
     static var MOCK_SHOP_ITEM_6 = ShopItem(name: "Rock'n'roll~~~", price: 22, emoji: "🎸", createdTime: Date())
     static var MOCK_SHOP_ITEM_7 = ShopItem(name: "ijustwannasaythatthiswillbeaveryverylongstring", price: 99, emoji: "💌", createdTime: Date())
-    static var DEFAULT_SHOP_ITEM_1 = ShopItem(name: "20 min. Game Time", price: 10, emoji: "🎮", createdTime: Date())
-    static var DEFAULT_SHOP_ITEM_2 = ShopItem(name: "Boba Milk Tea", price: 5, emoji: "🧋", createdTime: Date())
-    static var DEFAULT_SHOP_ITEM_3 = ShopItem(name: "Go to Cat Cafe", price: 18, emoji: "🐈", createdTime: Date())
+    static var DEFAULT_SHOP_ITEM_1 = ShopItem(name: "20 min. Game Time", price: 60, emoji: "🎮", createdTime: Date())
+    static var DEFAULT_SHOP_ITEM_2 = ShopItem(name: "Boba Milk Tea", price: 30, emoji: "🧋", createdTime: Date())
+    static var DEFAULT_SHOP_ITEM_3 = ShopItem(name: "Go to Cat Cafe", price: 150, emoji: "🐈", createdTime: Date())
 }

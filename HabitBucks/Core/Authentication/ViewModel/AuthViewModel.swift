@@ -47,14 +47,17 @@ class AuthViewModel: ObservableObject {
         // getting token
         guard let token = credential.identityToken else {
             print("DEBUG: error with firebase authenticate")
+            self.isLoading = false
             return
         }
         
         // token string
         guard let tokenString = String(data: token, encoding: .utf8) else {
             print("DEBUG: error with token")
+            self.isLoading = false
             return
         }
+        self.isLoading = true
         
         let firebaseCredential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokenString, rawNonce: self.nonce)
         let result = try await Auth.auth().signIn(with: firebaseCredential)
@@ -64,7 +67,7 @@ class AuthViewModel: ObservableObject {
         var name: String = ""
         let nameFormatter = PersonNameComponentsFormatter()
         nameFormatter.style = .default
-        let user = User(id: self.userSession?.uid ?? "00000", username: nameFormatter.string(from: credential.fullName ?? PersonNameComponents()), email: credential.email ?? "")
+        let user = User(id: self.userSession?.uid ?? "00000", username: nameFormatter.string(from: credential.fullName ?? PersonNameComponents()), email: self.userSession?.email ?? "error@error.com")
         let encodedUser = try Firestore.Encoder().encode(user)
         try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
         await fetchUser()
