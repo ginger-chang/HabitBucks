@@ -53,7 +53,7 @@ struct ShopItemView: View {
         // context menu for edit & delete
         .contextMenu {
             Button("Delete") {
-                print("Delete \(item.name)")
+                //print("Delete \(item.name)")
                 Task {
                     await shopViewModel.deleteShopItem(item: item)
                 }

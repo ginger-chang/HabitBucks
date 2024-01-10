@@ -159,13 +159,13 @@ class ShopViewModel: ObservableObject {
     }
     
     func buyItem(item: ShopItem) {
-        print("buy item called price = \(item.price) name = \(item.name)")
+        //print("buy item called price = \(item.price) name = \(item.name)")
         CoinManager.shared.minusCoins(n: item.price)
     }
  
     // addShopItem() function to add another shopItem to the database & update view
     func addShopItem(item: ShopItem) async {
-        print("add shop item called in shop view model \(item)")
+        //print("add shop item called in shop view model \(item)")
         // 1st step: update local self.shopItemList
         if var unwrappedList = self.shopItemList {
             unwrappedList.append(item)
@@ -211,6 +211,8 @@ class ShopViewModel: ObservableObject {
         } catch {
             print("DEBUG: error when removing item id from user shop doc \(error.localizedDescription)")
         }
+        // 4th step: remove name from itemNameToId
+        itemNameToId.removeValue(forKey: item.name)
     }
     
     // helper alert construction functions

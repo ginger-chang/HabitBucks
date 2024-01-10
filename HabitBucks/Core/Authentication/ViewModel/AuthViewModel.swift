@@ -31,9 +31,9 @@ class AuthViewModel: ObservableObject {
     static let shared = AuthViewModel()
     
     init() {
-        print("loading is true")
+        //print("loading is true")
         self.userSession = Auth.auth().currentUser
-        print("user session is \(self.userSession)")
+        //print("user session is \(self.userSession)")
         Task {
             await fetchUser()
         }
@@ -71,7 +71,7 @@ class AuthViewModel: ObservableObject {
         let encodedUser = try Firestore.Encoder().encode(user)
         try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
         await fetchUser()
-        print("log in success, result is \(result)")
+        //print("log in success, result is \(result)")
         
     }
     
@@ -126,7 +126,7 @@ class AuthViewModel: ObservableObject {
         }
         guard let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument() else {
             self.isLoading = false
-            print("is the problem here??")
+            //print("is the problem here??")
             return
         }
         self.currentUser = try? snapshot.data(as: User.self)

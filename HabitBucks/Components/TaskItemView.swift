@@ -89,7 +89,7 @@ struct TaskItemView: View {
                     Spacer()
                     Button {
                         TaskViewModel.shared.completeTask(item: item)
-                        print("complete task item \(item.name)")
+                        //print("complete task item \(item.name)")
                     } label: {
                         VStack {
                             Image(systemName: completeButtonImage)

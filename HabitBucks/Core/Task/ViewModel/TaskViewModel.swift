@@ -38,7 +38,7 @@ class TaskViewModel: ObservableObject {
     static var shared = TaskViewModel()
     
     init() {
-        print("init task vm")
+        //print("init task vm")
         self.activeBonusTaskList = []
         self.activeOnceTaskList = []
         self.activeDailyTaskList = []
@@ -53,12 +53,12 @@ class TaskViewModel: ObservableObject {
     
     func checkUpdate() {
         let currentDate = currentLocalTime()
-        print("cur date is \(currentDate)")
+        //print("cur date is \(currentDate)")
         let nu = needUpdate(date: currentDate)
-        print("need update is \(nu)")
+        //print("need update is \(nu)")
         if (nu > 0) {
             Task {
-                print("in task update")
+                //print("in task update")
                 await update(currentDate: currentDate, daysSince: nu)
             }
         }
@@ -68,7 +68,7 @@ class TaskViewModel: ObservableObject {
         if let lastUpdate = UserDefaults.standard.object(forKey: "lastUpdate") as? Date {
             // last update exists
             let last4am = last4AM(date: date) // date object
-            print("last update is \(lastUpdate), last4am is \(last4am)")
+            //print("last update is \(lastUpdate), last4am is \(last4am)")
             if (lastUpdate < last4am) {
                 let calendar = Calendar.current
                 let dateComponents = calendar.dateComponents([.day], from: lastUpdate, to: last4am)
@@ -101,12 +101,12 @@ class TaskViewModel: ObservableObject {
     
     // Update (reset): for daily & weekly & bonus
     func update(currentDate: Date, daysSince: Int) async {
-        print("update!")
+        //print("update!")
         UserDefaults.standard.set(currentDate, forKey: "lastUpdate")
         // go through every single task item, set up "new" active/inactive/sleeping arrays, then reset self.xxx
         // 1. view (control which arrs tasks should be in) 2. update (reset tasks)
         let currentDay = getDay(date: currentDate)
-        print("today is \(currentDay)")
+        //print("today is \(currentDay)")
         
         // UPDATES first - this will make sure all entries in self.xxx is the new, updated version
         if let taskArray = self.activeDailyTaskList {
@@ -246,7 +246,7 @@ class TaskViewModel: ObservableObject {
                 if let doc = doc, doc.exists {
                     let bonusEmoji = doc.get("emoji") as? String ?? "❌"
                     let bonusName = doc.get("name") as? String ?? "Error"
-                    print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
+                    //print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                     let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                     self.activeBonusTaskList = [bonus]
                     self.inactiveBonusTaskList = []
@@ -256,7 +256,7 @@ class TaskViewModel: ObservableObject {
                     self.inactiveBonusTaskList = []
                 }
             }
-            print("also need to update bonus")
+            //print("also need to update bonus")
         } catch let error {
             print("DEBUG: update bonus fail to get user_tasks, \(error.localizedDescription)")
             return
@@ -281,7 +281,7 @@ class TaskViewModel: ObservableObject {
     
     func getBonusId() -> String {
         let currentDate = Date()
-        print("cur date is \(currentDate)!?!?!?")
+        //print("cur date is \(currentDate)!?!?!?")
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: currentDate)
@@ -303,7 +303,7 @@ class TaskViewModel: ObservableObject {
 
         // Check if the given date is already after 4am
         if let targetDate = calendar.date(from: targetComponents) {
-            print("date: \(date), target date: \(targetDate)")
+            //print("date: \(date), target date: \(targetDate)")
             if (date > targetDate) {
                 return targetDate
             }
@@ -312,7 +312,7 @@ class TaskViewModel: ObservableObject {
 
         // If the given date is before 4am, subtract one day and set the time to 4am
         if let adjustedDate = calendar.date(byAdding: .day, value: -1, to: date) {
-            print("date: \(date), adjusted date: \(adjustedDate)")
+            //print("date: \(date), adjusted date: \(adjustedDate)")
             return calendar.date(bySettingHour: 4, minute: 0, second: 0, of: adjustedDate) ?? date
         }
 
@@ -352,7 +352,7 @@ class TaskViewModel: ObservableObject {
             if let doc = doc, doc.exists {
                 let bonusEmoji = doc.get("emoji") as? String ?? "❌"
                 let bonusName = doc.get("name") as? String ?? "Error"
-                print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
+                //print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                 let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                 self.activeBonusTaskList = [bonus]
                 self.inactiveBonusTaskList = []
@@ -374,7 +374,7 @@ class TaskViewModel: ObservableObject {
     }
     
     func asyncSetup() async {
-        print("task async setup called")
+        //print("task async setup called")
         // set up subscription to uid
         await AuthViewModel.shared.$currentUser
             .sink { [weak self] newUser in
@@ -406,9 +406,9 @@ class TaskViewModel: ObservableObject {
     
     // update the self.shopItemList variable based on database
     func fetchTaskList() async {
-        print("fetch task list")
+        //print("fetch task list")
         let docRef = self.db.collection("user_tasks").document(self.uid)
-        print("task got uid \(self.uid)")
+        //print("task got uid \(self.uid)")
         docRef.getDocument { (document, error) in
             if let error = error {
                 print("DEBUG: task view model fetch task item list failed \(error.localizedDescription)")
@@ -417,7 +417,7 @@ class TaskViewModel: ObservableObject {
                     // TODO: fetch bonus
                     // Bonus task
                     let bonusId = self.getBonusId()
-                    print("bonus id is \(bonusId)")
+                    //print("bonus id is \(bonusId)")
                     let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
                     bonusDocRef.getDocument { (doc, error) in
                         if let error = error {
@@ -430,7 +430,7 @@ class TaskViewModel: ObservableObject {
                             self.bonusStatus = bonusStatus ?? true
                             let bonusEmoji = doc.get("emoji") as? String ?? "❌"
                             let bonusName = doc.get("name") as? String ?? "Error"
-                            print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
+                            //print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                             let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                             if (bonusStatus ?? true) {
                                 self.activeBonusTaskList = [bonus]
@@ -506,7 +506,7 @@ class TaskViewModel: ObservableObject {
                                 }
                             }
                             if (progress == progress_goal) {
-                                print("finish loading! \(progress)/\(progress_goal)")
+                                //print("finish loading! \(progress)/\(progress_goal)")
                                 AuthViewModel.shared.loadingDone()
                             }
                         }
@@ -551,7 +551,7 @@ class TaskViewModel: ObservableObject {
     }
     
     func resetBonus(item: TaskItem) {
-        print("reset bonus!")
+        //print("reset bonus!")
         self.activeBonusTaskList = [item]
         self.inactiveBonusTaskList = []
         self.bonusStatus = true
@@ -584,7 +584,7 @@ class TaskViewModel: ObservableObject {
             return
         }
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: item.count_cur + 1, update: item.update, view: item.view)
-        print("newItem: \(newItem)")
+        //print("newItem: \(newItem)")
         CoinManager.shared.addCoins(n: item.reward)
         try? updateTaskItemInFirestore(oldItem: item, newItem: newItem)
         updateListEntry(oldItem: item, newItem: newItem)
@@ -593,14 +593,14 @@ class TaskViewModel: ObservableObject {
     // count_cur = 0
     func resetTask(item: TaskItem, minusCoin: Bool) {
         if (item.type == "bonus") {
-            print("reset bonus task plzplzplz")
+            //print("reset bonus task plzplzplz")
             resetBonus(item: item)
             return
         }
         if (item.count_cur == 0) {
             return
         }
-        print("reset task!! \(item.name)")
+        //print("reset task!! \(item.name)")
         let newItem = TaskItem(emoji: item.emoji, name: item.name, reward: item.reward, type: item.type, count_goal: item.count_goal, count_cur: 0, update: item.update, view: item.view)
         if minusCoin {
             CoinManager.shared.minusCoins(n: item.reward * item.count_cur)
@@ -610,7 +610,7 @@ class TaskViewModel: ObservableObject {
     }
     
     func deleteTask(item: TaskItem) async {
-        print("delete \(item.name)")
+        //print("delete \(item.name)")
         // 1. update locally
         if (item.count_cur == item.count_goal) {
             // inactive list
@@ -631,7 +631,7 @@ class TaskViewModel: ObservableObject {
         }
         // 2. update task_items
         let itemId = itemNameToId[item.name]
-        print("delete item id \(itemId)")
+        //print("delete item id \(itemId)")
         let docRef = db.collection("task_items").document(itemId ?? "")
         docRef.delete { error in
             if let error = error {
@@ -647,11 +647,12 @@ class TaskViewModel: ObservableObject {
         } catch {
             print("DEBUG: error removing task item from user tasks list, \(error.localizedDescription)")
         }
+        // 4. update itemNameToId
+        itemNameToId.removeValue(forKey: item.name)
     }
     
-    // TODO: ? add a bunch of dispatch queue main async's
     func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {
-        print("trying to update list entry")
+        //print("trying to update list entry")
         if (newItem.count_cur == newItem.count_goal) {
             // complete
             if (newItem.type == "once") {
