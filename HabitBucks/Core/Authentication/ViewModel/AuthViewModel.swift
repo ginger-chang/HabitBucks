@@ -11,6 +11,8 @@ import FirebaseCore
 import FirebaseFirestore
 import FirebaseFirestoreSwift
 import SwiftUI
+import CryptoKit
+import AuthenticationServices
 
 protocol AuthenticationFormProtocol {
     var formIsValid: Bool { get }
@@ -24,19 +26,50 @@ class AuthViewModel: ObservableObject {
     @Published var signInAlert = false
     @Published var createAccountAlert = false
     
+    @Published var nonce = ""
+    
     static let shared = AuthViewModel()
     
     init() {
         print("loading is true")
         self.userSession = Auth.auth().currentUser
+        print("user session is \(self.userSession)")
         Task {
             await fetchUser()
         }
-        
     }
     
     func giveUid() -> String {
         return self.currentUser?.id ?? ""
+    }
+    
+    func authenticate(credential: ASAuthorizationAppleIDCredential) async throws {
+        // getting token
+        guard let token = credential.identityToken else {
+            print("DEBUG: error with firebase authenticate")
+            return
+        }
+        
+        // token string
+        guard let tokenString = String(data: token, encoding: .utf8) else {
+            print("DEBUG: error with token")
+            return
+        }
+        
+        let firebaseCredential = OAuthProvider.credential(withProviderID: "apple.com", idToken: tokenString, rawNonce: self.nonce)
+        let result = try await Auth.auth().signIn(with: firebaseCredential)
+        
+        // user successfully logged in to firebase
+        self.userSession = result.user
+        var name: String = ""
+        let nameFormatter = PersonNameComponentsFormatter()
+        nameFormatter.style = .default
+        let user = User(id: self.userSession?.uid ?? "00000", username: nameFormatter.string(from: credential.fullName ?? PersonNameComponents()), email: credential.email ?? "")
+        let encodedUser = try Firestore.Encoder().encode(user)
+        try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+        await fetchUser()
+        print("log in success, result is \(result)")
+        
     }
     
     func signIn(withEmail email: String, password: String) async throws {
@@ -90,6 +123,7 @@ class AuthViewModel: ObservableObject {
         }
         guard let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument() else {
             self.isLoading = false
+            print("is the problem here??")
             return
         }
         self.currentUser = try? snapshot.data(as: User.self)
@@ -117,4 +151,37 @@ class AuthViewModel: ObservableObject {
     func loadingDone() {
         self.isLoading = false
     }
+}
+
+// helpers for sign in with apple
+
+func randomNonceString(length: Int = 32) -> String {
+    precondition(length > 0)
+    var randomBytes = [UInt8](repeating: 0, count: length)
+    let errorCode = SecRandomCopyBytes(kSecRandomDefault, randomBytes.count, &randomBytes)
+    if errorCode != errSecSuccess {
+        fatalError(
+            "Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)"
+        )
+    }
+    
+    let charset: [Character] =
+    Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+    
+    let nonce = randomBytes.map { byte in
+        // Pick a random character from the set, wrapping around if needed.
+        charset[Int(byte) % charset.count]
+    }
+    
+    return String(nonce)
+}
+
+func sha256(_ input: String) -> String {
+    let inputData = Data(input.utf8)
+    let hashedData = SHA256.hash(data: inputData)
+    let hashString = hashedData.compactMap {
+        String(format: "%02x", $0)
+    }.joined()
+    
+    return hashString
 }

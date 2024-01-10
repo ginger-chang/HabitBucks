@@ -8,7 +8,7 @@
 import Foundation
 
 struct TaskItem: Codable, Identifiable {
-    let id = UUID()
+    var id = UUID()
     let emoji: String
     let name: String
     let reward: Int

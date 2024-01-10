@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
-
+import AuthenticationServices
+                                               // converts ui kit view to swift ui
 struct LoginView: View {
+    
     @State private var email = ""
     @State private var password = ""
     @EnvironmentObject var viewModel: AuthViewModel
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @Environment(\.colorScheme) var colorScheme
     
     var bannerImageHeight: CGFloat {
         return horizontalSizeClass == .regular ? 270 : 120
@@ -19,6 +22,10 @@ struct LoginView: View {
     
     var inputFieldsPadding: CGFloat {
         return horizontalSizeClass == .regular ? 50 : 12
+    }
+    
+    var signInWithAppleStyle: ASAuthorizationAppleIDButton.Style {
+        return (colorScheme == .dark) ? .white : .black
     }
     
     var body: some View {
@@ -47,7 +54,7 @@ struct LoginView: View {
                 .padding(.horizontal)
                 .padding(.top, inputFieldsPadding)
                 
-                // sign in
+                // sign in with email
                 Button {
                     Task {
                         try await viewModel.signIn(withEmail: email, password: password)
@@ -67,6 +74,33 @@ struct LoginView: View {
                 .padding(.top)
                 .disabled(!formIsValid)
                 .opacity(formIsValid ? 1.0 : 0.5)
+                
+                // sign in with apple
+                SignInWithAppleButton { (request) in
+                    viewModel.nonce = randomNonceString()
+                    request.requestedScopes = [.email, .fullName]
+                    request.nonce = sha256(viewModel.nonce)
+                } onCompletion: { (result) in
+                    switch result {
+                    case .success(let user):
+                        // do login with firebase
+                        print("success")
+                        guard let credential = user.credential as? ASAuthorizationAppleIDCredential else {
+                            print("DEBUG: error with firebase")
+                            return
+                        }
+                        Task {
+                            try await viewModel.authenticate(credential: credential)
+                        }
+                    case .failure(let error):
+                        print("sign in with apple error: \(error.localizedDescription)")
+                    }
+                }
+                .signInWithAppleButtonStyle(colorScheme == .light ? .black : .white)
+                .frame(width: UIScreen.main.bounds.width - 32, height: 48)
+                .cornerRadius(10)
+                .padding(.top, 5)
+                
                 
                 Spacer()
                 

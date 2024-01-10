@@ -102,6 +102,7 @@ struct RegistrationView: View {
                             .fontWeight(.bold)
                     }
                     .font(.system(size: 14))
+                    .padding(.bottom)
                 }
 
             }

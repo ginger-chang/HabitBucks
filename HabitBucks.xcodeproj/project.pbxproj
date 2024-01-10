@@ -66,6 +66,7 @@
 		D20CA7F72B2F531A00FFE005 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		D23EA3582B30265D00C9E436 /* DayInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayInputView.swift; sourceTree = "<group>"; };
 		D23EA35A2B303A2900C9E436 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
+		D2C6D11B2B4E43FA005814E6 /* HabitBucks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HabitBucks.entitlements; sourceTree = "<group>"; };
 		D2DC07782B1D8FA90038DBFC /* HabitBucks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HabitBucks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitBucksApp.swift; sourceTree = "<group>"; };
 		D2DC077D2B1D8FA90038DBFC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -152,6 +153,7 @@
 		D2DC077A2B1D8FA90038DBFC /* HabitBucks */ = {
 			isa = PBXGroup;
 			children = (
+				D2C6D11B2B4E43FA005814E6 /* HabitBucks.entitlements */,
 				D2DC07A52B1D90690038DBFC /* App */,
 				D2DC07A82B1D90930038DBFC /* Model */,
 				D2DC07A72B1D908F0038DBFC /* Core */,
@@ -652,6 +654,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HabitBucks/HabitBucks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"HabitBucks/Preview Content\"";
@@ -681,6 +684,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HabitBucks/HabitBucks.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"HabitBucks/Preview Content\"";
