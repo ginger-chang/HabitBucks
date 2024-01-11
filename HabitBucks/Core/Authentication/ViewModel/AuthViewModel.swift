@@ -132,8 +132,7 @@ class AuthViewModel: ObservableObject {
         )
     }
     
-    func deleteAccount() async {
-        self.isLoading = true
+    func deleteUserData() async {
         let uid = self.giveUid()
         let db = Firestore.firestore()
         Task {
@@ -201,6 +200,40 @@ class AuthViewModel: ObservableObject {
             } catch {
                 self.isLoading = false
                 print("Error removing document: \(error)")
+            }
+        }
+    }
+    
+    func deleteAccount() async {
+        guard let user = self.userSession else { return }
+        Task {
+            let needsTokenRevocation = user.providerData.contains { $0.providerID == "apple.com" }
+            if needsTokenRevocation {
+                let signInWithApple = SignInWithApple()
+                let appleIDCredential = try await signInWithApple()
+                
+                guard let appleIDToken = appleIDCredential.identityToken else {
+                    print("Unable to fetch identify token.")
+                    return
+                }
+                guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                    print("Unable to serialise token string from data: \(appleIDToken.debugDescription)")
+                    return
+                }
+                self.isLoading = true
+                
+                let nonce = randomNonceString()
+                let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                                                          idToken: idTokenString,
+                                                          rawNonce: nonce)
+                
+                guard let authorizationCode = appleIDCredential.authorizationCode else { return }
+                guard let authCodeString = String(data: authorizationCode, encoding: .utf8) else { return }
+                await deleteUserData()
+                try await Auth.auth().revokeToken(withAuthorizationCode: authCodeString)
+            } else {
+                self.isLoading = true
+                await deleteUserData()
             }
         }
     }
@@ -274,4 +307,141 @@ func sha256(_ input: String) -> String {
     }.joined()
     
     return hashString
+}
+
+
+class SignInWithApple: NSObject, ASAuthorizationControllerDelegate {
+    
+    private var continuation : CheckedContinuation<ASAuthorizationAppleIDCredential, Error>?
+    
+    func callAsFunction() async throws -> ASAuthorizationAppleIDCredential {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.continuation = continuation
+            let appleIDProvider = ASAuthorizationAppleIDProvider()
+            let request = appleIDProvider.createRequest()
+            request.requestedScopes = [.fullName, .email]
+            
+            let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+            authorizationController.delegate = self
+            authorizationController.performRequests()
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if case let appleIDCredential as ASAuthorizationAppleIDCredential = authorization.credential {
+            continuation?.resume(returning: appleIDCredential)
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        continuation?.resume(throwing: error)
+    }
+}
+
+
+class TokenRevocationHelper: NSObject, ASAuthorizationControllerDelegate {
+    
+    private var continuation : CheckedContinuation<Void, Error>?
+    
+    func revokeToken() async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            self.continuation = continuation
+            let appleIDProvider = ASAuthorizationAppleIDProvider()
+            let request = appleIDProvider.createRequest()
+            request.requestedScopes = [.fullName, .email]
+            
+            let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+            authorizationController.delegate = self
+            authorizationController.performRequests()
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if case let appleIDCredential as ASAuthorizationAppleIDCredential = authorization.credential {
+            guard let authorizationCode = appleIDCredential.authorizationCode else { return }
+            guard let authCodeString = String(data: authorizationCode, encoding: .utf8) else { return }
+            
+            Task {
+                try await Auth.auth().revokeToken(withAuthorizationCode: authCodeString)
+                continuation?.resume()
+            }
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        continuation?.resume(throwing: error)
+    }
+}
+
+extension AuthViewModel {
+    
+    func handleSignInWithAppleRequest(_ request: ASAuthorizationAppleIDRequest) {
+        request.requestedScopes = [.fullName, .email]
+        let tempNonce = randomNonceString()
+        nonce = tempNonce
+        request.nonce = sha256(tempNonce)
+    }
+    
+    func handleSignInWithAppleCompletion(_ result: Result<ASAuthorization, Error>) {
+        if case .failure(let failure) = result {
+            print("DEBUG: \(failure.localizedDescription)")
+        }
+        else if case .success(let authorization) = result {
+            if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+                let tempNonce = nonce
+                guard let appleIDToken = appleIDCredential.identityToken else {
+                    print("Unable to fetdch identify token.")
+                    return
+                }
+                guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                    print("Unable to serialise token string from data: \(appleIDToken.debugDescription)")
+                    return
+                }
+                
+                let credential = OAuthProvider.appleCredential(withIDToken: idTokenString,
+                                                               rawNonce: tempNonce,
+                                                               fullName: appleIDCredential.fullName)
+                Task {
+                    do {
+                        let _ = try await Auth.auth().signIn(with: credential)
+                    }
+                    catch {
+                        print("Error authenticating: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    func verifySignInWithAppleAuthenticationState() {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let providerData = Auth.auth().currentUser?.providerData
+        if let appleProviderData = providerData?.first(where: { $0.providerID == "apple.com" }) {
+            Task {
+                do {
+                    let credentialState = try await appleIDProvider.credentialState(forUserID: appleProviderData.uid)
+                    switch credentialState {
+                    case .authorized:
+                        break // The Apple ID credential is valid.
+                    case .revoked, .notFound:
+                        // The Apple ID credential is either revoked or was not found, so show the sign-in UI.
+                        self.signOut()
+                    default:
+                        break
+                    }
+                }
+                catch {
+                }
+            }
+        }
+    }
+    
+}
+
+extension ASAuthorizationAppleIDCredential {
+    func displayName() -> String {
+        return [self.fullName?.givenName, self.fullName?.familyName]
+            .compactMap( {$0})
+            .joined(separator: " ")
+    }
 }
