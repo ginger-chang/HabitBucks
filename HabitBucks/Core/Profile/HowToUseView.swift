@@ -15,7 +15,7 @@ struct HowToUseView: View {
             Image("icon")
                 .resizable()
                 .frame(width: 100, height: 100)
-            Text("Turn tasks into treasures! HabitBucks: Where every completed task is a step closer to your rewards.")
+            Text("Gamify your routine! HabitBucks: Where every completed task is a step closer to your rewards.")
                 .bold()
             List {
                 Section ("Summary") {

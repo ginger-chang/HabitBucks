@@ -112,7 +112,7 @@ struct AddTaskView: View {
                 .disabled(!formIsValid)
                 .opacity(formIsValid ? 1.0 : 0.5)
             }
-            .navigationBarTitle("Your Title", displayMode: .inline)
+            .navigationBarTitle("", displayMode: .inline)
             Spacer()
         }
     }

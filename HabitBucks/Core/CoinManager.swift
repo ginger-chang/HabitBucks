@@ -23,7 +23,7 @@ class CoinManager: ObservableObject {
     static let shared = CoinManager()
     
     init() {
-        print("coin manager init is called")
+        //print("coin manager init is called")
         self.coins = 0
         self.uid = ""
     }
@@ -46,7 +46,7 @@ class CoinManager: ObservableObject {
                 return
             }
         }
-        print("update coin firestore, uid is \(self.uid)")
+        //print("update coin firestore, uid is \(self.uid)")
         // check if document doesn't exist, add another
         let collection = db.collection("coins")
         let documentReference = collection.document(self.uid)

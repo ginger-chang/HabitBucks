@@ -25,6 +25,7 @@ class AuthViewModel: ObservableObject {
     @Published var isLoading = true
     @Published var signInAlert = false
     @Published var createAccountAlert = false
+    @Published var showAlert = false
     
     @Published var nonce = ""
     
@@ -114,8 +115,94 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    func deleteAccount() {
-         
+    func deleteAccountClicked() {
+        self.showAlert = true
+    }
+    
+    func constructDeleteAccountAlert() -> Alert {
+        return Alert(
+            title: Text("Delete Account"),
+            message: Text("Do you want to delete your account?"),
+            primaryButton: .default(Text("Yes"), action: {
+                Task {
+                    await self.deleteAccount()
+                }
+            }),
+            secondaryButton: .cancel(Text("No"))
+        )
+    }
+    
+    func deleteAccount() async {
+        self.isLoading = true
+        let uid = self.giveUid()
+        let db = Firestore.firestore()
+        Task {
+            do {
+                // delete coins
+                try await db.collection("coins").document(uid).delete()
+                // delete all shop items
+                let shopItemsRef = db.collection("user_shop").document(uid)
+                shopItemsRef.getDocument { (document, error) in
+                    if let error = error {
+                        print("DEBUG: 142 \(error.localizedDescription)")
+                    } else if let document = document, document.exists {
+                        let shopItemIdList = document.get("shop_item_list") as? [String]
+                        for shopItemId in shopItemIdList ?? [] {
+                            Task {
+                                try await db.collection("shop_items").document(shopItemId).delete()
+                                self.userSession = nil
+                                self.currentUser = nil
+                                self.isLoading = false
+                                return
+                            }
+                        }
+                    }
+                }
+                // delete all task items
+                let taskItemsRef = db.collection("user_tasks").document(uid)
+                taskItemsRef.getDocument { (document, error) in
+                    if let error = error {
+                        print("DEBUG: 156 \(error.localizedDescription)")
+                    } else if let document = document, document.exists {
+                        let taskItemIdList = document.get("task_item_list") as? [String]
+                        for taskItemId in taskItemIdList ?? [] {
+                            Task {
+                                try await db.collection("task_items").document(taskItemId).delete()
+                                self.userSession = nil
+                                self.currentUser = nil
+                                self.isLoading = false
+                                return
+                            }
+                        }
+                    }
+                }
+                // delete user shop
+                try await db.collection("user_shop").document(uid).delete()
+                // delete user_tasks
+                try await db.collection("user_tasks").document(uid).delete()
+                // delete users
+                try await db.collection("users").document(uid).delete()
+                // Auth delete user
+                let user = Auth.auth().currentUser
+                user?.delete { error in
+                    if let error = error {
+                        print("DEBUG: 177, account delete failed, \(error.localizedDescription)")
+                        self.userSession = nil
+                        self.currentUser = nil
+                        self.isLoading = false
+                        return
+                    }
+                }
+                self.isLoading = false
+                
+                UserDefaults.standard.removeObject(forKey: "lastUpdate")
+                self.userSession = nil
+                self.currentUser = nil
+            } catch {
+                self.isLoading = false
+                print("Error removing document: \(error)")
+            }
+        }
     }
     
     func fetchUser() async {

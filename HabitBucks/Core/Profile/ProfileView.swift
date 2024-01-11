@@ -32,7 +32,7 @@ struct ProfileView: View {
                                             title: "Version",
                                             tintColor: Color(.systemGray))
                             Spacer()
-                            Text("1.0.0")
+                            Text("1.0")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                         }
@@ -53,8 +53,18 @@ struct ProfileView: View {
                                             title: "Sign Out",
                                             tintColor: Color(.red))
                         }
+                        Button {
+                            viewModel.deleteAccountClicked()
+                        } label: {
+                            SettingsRowView(imageName: "xmark.circle.fill",
+                                            title: "Delete Account",
+                                            tintColor: Color(.red))
+                        }
                     }
                 }
+            }
+            .alert(isPresented: $viewModel.showAlert) {
+                return viewModel.constructDeleteAccountAlert()
             }
         }
     }

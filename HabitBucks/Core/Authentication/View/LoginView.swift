@@ -78,7 +78,7 @@ struct LoginView: View {
                 // sign in with apple
                 SignInWithAppleButton { (request) in
                     viewModel.nonce = randomNonceString()
-                    request.requestedScopes = [.email, .fullName]
+                    request.requestedScopes = [.email]
                     request.nonce = sha256(viewModel.nonce)
                 } onCompletion: { (result) in
                     switch result {

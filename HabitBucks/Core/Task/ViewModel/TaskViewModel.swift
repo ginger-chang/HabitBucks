@@ -374,7 +374,7 @@ class TaskViewModel: ObservableObject {
     }
     
     func asyncSetup() async {
-        //print("task async setup called")
+        print("task async setup called")
         // set up subscription to uid
         await AuthViewModel.shared.$currentUser
             .sink { [weak self] newUser in
@@ -406,7 +406,7 @@ class TaskViewModel: ObservableObject {
     
     // update the self.shopItemList variable based on database
     func fetchTaskList() async {
-        //print("fetch task list")
+        print("fetch task list")
         let docRef = self.db.collection("user_tasks").document(self.uid)
         //print("task got uid \(self.uid)")
         docRef.getDocument { (document, error) in
@@ -452,6 +452,9 @@ class TaskViewModel: ObservableObject {
                     var newInactiveWeeklyList: [TaskItem] = []
                     var progress = 0
                     var progress_goal = taskIdList?.count ?? 0
+                    if (progress_goal == 0) {
+                        AuthViewModel.shared.loadingDone()
+                    }
                     for taskItemId in taskIdList ?? [] {
                         let taskItemDocRef = self.db.collection("task_items").document(taskItemId)
                         taskItemDocRef.getDocument { (doc, error) in
@@ -505,6 +508,7 @@ class TaskViewModel: ObservableObject {
                                     }
                                 }
                             }
+                            //print("progress: \(progress)/\(progress_goal)")
                             if (progress == progress_goal) {
                                 //print("finish loading! \(progress)/\(progress_goal)")
                                 AuthViewModel.shared.loadingDone()
@@ -659,6 +663,7 @@ class TaskViewModel: ObservableObject {
                 if var list = self.activeOnceTaskList {
                     list.removeAll { $0 == oldItem }
                     self.activeOnceTaskList = list.sorted{ $0.name < $1.name }
+                    self.itemNameToId.removeValue(forKey: oldItem.name)
                 }
             } else if (newItem.type == "daily") {
                 if var list = self.activeDailyTaskList {
