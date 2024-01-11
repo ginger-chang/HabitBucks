@@ -36,6 +36,12 @@ struct AddTaskView: View {
                         text: $emoji,
                         title: "Emoji",
                         placeholder: "⌛️")
+                    .onChange(of: emoji) { newValue in
+                        // Limit to one character
+                        if newValue.count > 1 {
+                            emoji = String(newValue.prefix(1))
+                        }
+                    }
                     InputView(
                         text: $name,
                         title: "Name",
