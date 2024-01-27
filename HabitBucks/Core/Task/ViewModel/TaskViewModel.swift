@@ -57,6 +57,8 @@ class TaskViewModel: ObservableObject {
         let rtn = UserDefaults.standard.stringArray(forKey: "AppleLanguages")?[0] ?? ""
         if rtn.contains("zh-Hant") {
             return "zh-Hant"
+        } else if rtn.contains("zh-Hans") {
+            return "zh-Hans"
         }
         return rtn
     }
@@ -261,6 +263,8 @@ class TaskViewModel: ObservableObject {
                     var bonusName = ""
                     if (lang == "zh-Hant") {
                         bonusName = doc.get("ct_name") as? String ?? "Error"
+                    } else if (lang == "zh-Hans") {
+                        bonusName = doc.get("cs_name") as? String ?? "Error"
                     } else {
                         bonusName = doc.get("name") as? String ?? "Error"
                     }
@@ -354,6 +358,16 @@ class TaskViewModel: ObservableObject {
                 itemNameToId[TaskItem.DEFAULT_ONCE_TASK_ct.name] = id1
                 itemNameToId[TaskItem.DEFAULT_DAILY_TASK_ct.name] = id2
                 itemNameToId[TaskItem.DEFAULT_WEEKLY_TASK_ct.name] = id3
+            } else if (lang == "zh-Hans") {
+                let id1 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_ONCE_TASK_cs)
+                let id2 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_DAILY_TASK_cs)
+                let id3 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_WEEKLY_TASK_cs)
+                taskIdArray.append(id1)
+                taskIdArray.append(id2)
+                taskIdArray.append(id3)
+                itemNameToId[TaskItem.DEFAULT_ONCE_TASK_cs.name] = id1
+                itemNameToId[TaskItem.DEFAULT_DAILY_TASK_cs.name] = id2
+                itemNameToId[TaskItem.DEFAULT_WEEKLY_TASK_cs.name] = id3
             } else {
                 let id1 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_ONCE_TASK)
                 let id2 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_DAILY_TASK)
@@ -384,7 +398,9 @@ class TaskViewModel: ObservableObject {
                 let bonusEmoji = doc.get("emoji") as? String ?? "🔮"
                 var bonusName = ""
                 if (lang == "zh-Hant") {
-                    bonusName = doc.get("ct_name") as? String ?? "限定：玩一個心理測驗"
+                    bonusName = doc.get("ct_name") as? String ?? "驚喜任務：玩一個心理測驗"
+                } else if (lang == "zh-Hans") {
+                    bonusName = doc.get("cs_name") as? String ?? "惊喜任务：玩一个心理测验"
                 } else {
                     bonusName = doc.get("name") as? String ?? "Bonus: Play a personality test"
                 }
@@ -403,6 +419,10 @@ class TaskViewModel: ObservableObject {
                 self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK_ct]
                 self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK_ct]
                 self.activeWeeklyTaskList = [TaskItem.DEFAULT_WEEKLY_TASK_ct]
+            } else if (lang == "zh-Hans") {
+                self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK_cs]
+                self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK_cs]
+                self.activeWeeklyTaskList = [TaskItem.DEFAULT_WEEKLY_TASK_cs]
             } else {
                 self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK]
                 self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK]
@@ -475,6 +495,8 @@ class TaskViewModel: ObservableObject {
                             var bonusName = ""
                             if (lang == "zh-Hant") {
                                 bonusName = doc.get("ct_name") as? String ?? "Error"
+                            } else if (lang == "zh-Hans") {
+                                bonusName = doc.get("cs_name") as? String ?? "Error"
                             } else {
                                 bonusName = doc.get("name") as? String ?? "Error"
                             }

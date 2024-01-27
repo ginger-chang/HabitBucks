@@ -44,6 +44,8 @@ class ShopViewModel: ObservableObject {
         let rtn = UserDefaults.standard.stringArray(forKey: "AppleLanguages")?[0] ?? ""
         if rtn.contains("zh-Hant") {
             return "zh-Hant"
+        } else if rtn.contains("zh-Hans") {
+            return "zh-Hans"
         }
         return rtn
     }
@@ -64,6 +66,16 @@ class ShopViewModel: ObservableObject {
                 itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_1_ct.name] = id1
                 itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_2_ct.name] = id2
                 itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_3_ct.name] = id3
+            } else if (lang == "zh-Hans") {
+                let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1_cs)
+                let id2 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_2_cs)
+                let id3 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_3_cs)
+                shopItemArray.append(id1)
+                shopItemArray.append(id2)
+                shopItemArray.append(id3)
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_1_cs.name] = id1
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_2_cs.name] = id2
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_3_cs.name] = id3
             } else {
                 let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
                 let id2 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_2)
@@ -92,6 +104,10 @@ class ShopViewModel: ObservableObject {
                 newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1_ct)
                 newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2_ct)
                 newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3_ct)
+            } else if (lang == "zh-Hans") {
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1_cs)
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2_cs)
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3_cs)
             } else {
                 newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1)
                 newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2)

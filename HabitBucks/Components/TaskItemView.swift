@@ -50,6 +50,8 @@ struct TaskItemView: View {
             return ""
         } else if (lang.contains("zh-Hant")) {
             return "/點擊"
+        } else if (lang.contains("zh-Hans")) {
+            return "/点击"
         } else {
             return "/click"
         }

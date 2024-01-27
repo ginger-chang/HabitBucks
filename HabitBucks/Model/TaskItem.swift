@@ -66,4 +66,11 @@ extension TaskItem {
                                              update: [true, true, true, true, true, true, true], view: [true, true, true, true, true, true, true])
     static var DEFAULT_WEEKLY_TASK_ct = TaskItem(emoji: "👨‍👩‍👦", name: "打電話給爸媽", reward: 10, type: "weekly", count_goal: 3, count_cur: 0,
                                               update: [true, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+    // Chinese Simplified
+    static var DEFAULT_ONCE_TASK_cs = TaskItem(emoji: "📱", name: "学习使用HabitBucks (帐号 > 使用说明)", reward: 15, type: "once", count_goal: 1, count_cur: 0,
+                                            update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+    static var DEFAULT_DAILY_TASK_cs = TaskItem(emoji: "🥛", name: "喝两杯牛奶", reward: 5, type: "daily", count_goal: 2, count_cur: 0,
+                                             update: [true, true, true, true, true, true, true], view: [true, true, true, true, true, true, true])
+    static var DEFAULT_WEEKLY_TASK_cs = TaskItem(emoji: "👨‍👩‍👦", name: "打电话给爸妈", reward: 10, type: "weekly", count_goal: 3, count_cur: 0,
+                                              update: [true, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
 }

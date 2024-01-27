@@ -34,6 +34,7 @@
 
     },
     "1.0" : {
+      "extractionState" : "stale",
       "localizations" : {
         "zh-Hans" : {
           "stringUnit" : {
@@ -45,6 +46,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1.0"
+          }
+        }
+      }
+    },
+    "1.1" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1.1"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1.1"
           }
         }
       }
@@ -589,6 +606,38 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "輸入密碼"
+          }
+        }
+      }
+    },
+    "Facebook" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "脸书"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "臉書"
+          }
+        }
+      }
+    },
+    "Follow HabitBucks" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追踪HabitBucks"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "追蹤 HabitBucks"
           }
         }
       }
@@ -1372,6 +1421,22 @@
         }
       }
     },
+    "Website" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网站"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "網站"
+          }
+        }
+      }
+    },
     "Weekly (Start on Monday)" : {
       "localizations" : {
         "zh-Hans" : {
@@ -1416,6 +1481,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "每週：任務每天都會顯示，並在週日/週一凌晨 4 點更新。"
+          }
+        }
+      }
+    },
+    "X (Twitter)" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "X (推特)"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "X (推特)"
           }
         }
       }

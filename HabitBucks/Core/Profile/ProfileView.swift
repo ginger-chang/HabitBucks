@@ -32,7 +32,7 @@ struct ProfileView: View {
                                             title: "Version",
                                             tintColor: Color(.systemGray))
                             Spacer()
-                            Text("1.0")
+                            Text("1.1")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                         }
@@ -41,6 +41,29 @@ struct ProfileView: View {
                         } label: {
                             SettingsRowView(imageName: "questionmark.circle.fill",
                                             title: "How to use",
+                                            tintColor: Color(.systemGray))
+                        }
+                    }
+                    Section("Follow HabitBucks") {
+                        Button {
+                            UIApplication.shared.open(URL(string: "https://habitbucks.netlify.app/")!, options: [:], completionHandler: nil)
+                        } label: {
+                            SettingsRowView(imageName: "globe",
+                                            title: "Website",
+                                            tintColor: Color(.systemGray))
+                        }
+                        Button {
+                            UIApplication.shared.open(URL(string: "https://www.facebook.com/profile.php?id=61555329190687")!, options: [:], completionHandler: nil)
+                        } label: {
+                            SettingsSocialMediaView(imageName: "facebook",
+                                            title: "Facebook",
+                                            tintColor: Color(.systemGray))
+                        }
+                        Button {
+                            UIApplication.shared.open(URL(string: "https://twitter.com/HabitBucks")!, options: [:], completionHandler: nil)
+                        } label: {
+                            SettingsSocialMediaView(imageName: "x-twitter",
+                                            title: "X (Twitter)",
                                             tintColor: Color(.systemGray))
                         }
                     }
