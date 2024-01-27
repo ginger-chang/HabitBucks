@@ -30,4 +30,7 @@ extension ShopItem {
     static var DEFAULT_SHOP_ITEM_1 = ShopItem(name: "20 min. Game Time", price: 60, emoji: "🎮", createdTime: Date())
     static var DEFAULT_SHOP_ITEM_2 = ShopItem(name: "Boba Milk Tea", price: 30, emoji: "🧋", createdTime: Date())
     static var DEFAULT_SHOP_ITEM_3 = ShopItem(name: "Go to Cat Cafe", price: 150, emoji: "🐈", createdTime: Date())
+    static var DEFAULT_SHOP_ITEM_1_ct = ShopItem(name: "遊戲時間 20 分鐘", price: 60, emoji: "🎮", createdTime: Date())
+    static var DEFAULT_SHOP_ITEM_2_ct = ShopItem(name: "一杯珍珠奶茶", price: 30, emoji: "🧋", createdTime: Date())
+    static var DEFAULT_SHOP_ITEM_3_ct = ShopItem(name: "去一次貓咪咖啡廳", price: 150, emoji: "🐈", createdTime: Date())
 }

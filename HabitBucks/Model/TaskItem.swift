@@ -52,10 +52,18 @@ extension TaskItem {
                                             update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
     static var BONUS_1 = TaskItem(emoji: "💌", name: "Bonus Task: Tell someone you appreciate them", reward: 10, type: "bonus", count_goal: 1, count_cur: 0,
                                   update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+    // English
     static var DEFAULT_ONCE_TASK = TaskItem(emoji: "📱", name: "Learn HabitBucks (Profile > How to use)", reward: 15, type: "once", count_goal: 1, count_cur: 0,
                                             update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
     static var DEFAULT_DAILY_TASK = TaskItem(emoji: "🥛", name: "Drink 2 cups of milk", reward: 5, type: "daily", count_goal: 2, count_cur: 0,
                                              update: [true, true, true, true, true, true, true], view: [true, true, true, true, true, true, true])
     static var DEFAULT_WEEKLY_TASK = TaskItem(emoji: "👨‍👩‍👦", name: "Call parents", reward: 10, type: "weekly", count_goal: 3, count_cur: 0,
+                                              update: [true, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+    // Chinese Traditional
+    static var DEFAULT_ONCE_TASK_ct = TaskItem(emoji: "📱", name: "學習使用HabitBucks (帳號 > 使用說明)", reward: 15, type: "once", count_goal: 1, count_cur: 0,
+                                            update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
+    static var DEFAULT_DAILY_TASK_ct = TaskItem(emoji: "🥛", name: "喝兩杯牛奶", reward: 5, type: "daily", count_goal: 2, count_cur: 0,
+                                             update: [true, true, true, true, true, true, true], view: [true, true, true, true, true, true, true])
+    static var DEFAULT_WEEKLY_TASK_ct = TaskItem(emoji: "👨‍👩‍👦", name: "打電話給爸媽", reward: 10, type: "weekly", count_goal: 3, count_cur: 0,
                                               update: [true, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
 }

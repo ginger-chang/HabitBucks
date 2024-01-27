@@ -39,20 +39,42 @@ class ShopViewModel: ObservableObject {
         self.uid = ""
     }
     
+    // MARK: for localization of bonus tasks
+    func currentLanguage() -> String {
+        let rtn = UserDefaults.standard.stringArray(forKey: "AppleLanguages")?[0] ?? ""
+        if rtn.contains("zh-Hant") {
+            return "zh-Hant"
+        }
+        return rtn
+    }
+    
     // This is called only when the user creates an account & need to set up documents
     func createShop() async {
         // creating shop items
         var shopItemArray: [String] = []
+        let lang = currentLanguage()
         do {
-            let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
-            let id2 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_2)
-            let id3 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_3)
-            shopItemArray.append(id1)
-            shopItemArray.append(id2)
-            shopItemArray.append(id3)
-            itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_1.name] = id1
-            itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_2.name] = id2
-            itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_3.name] = id3
+            if (lang == "zh-Hant") {
+                let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1_ct)
+                let id2 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_2_ct)
+                let id3 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_3_ct)
+                shopItemArray.append(id1)
+                shopItemArray.append(id2)
+                shopItemArray.append(id3)
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_1_ct.name] = id1
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_2_ct.name] = id2
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_3_ct.name] = id3
+            } else {
+                let id1 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_1)
+                let id2 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_2)
+                let id3 = try await storeShopItemToFirestore(item: ShopItem.DEFAULT_SHOP_ITEM_3)
+                shopItemArray.append(id1)
+                shopItemArray.append(id2)
+                shopItemArray.append(id3)
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_1.name] = id1
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_2.name] = id2
+                itemNameToId[ShopItem.DEFAULT_SHOP_ITEM_3.name] = id3
+            }
         } catch {
             print("DEBUG: createShopItems failed with error \(error.localizedDescription)")
         }
@@ -66,9 +88,15 @@ class ShopViewModel: ObservableObject {
         }
         DispatchQueue.main.async {
             var newShopItemList: [ShopItem] = []
-            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1)
-            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2)
-            newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3)
+            if (lang == "zh-Hant") {
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1_ct)
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2_ct)
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3_ct)
+            } else {
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_1)
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_2)
+                newShopItemList.append(ShopItem.DEFAULT_SHOP_ITEM_3)
+            }
             self.shopItemList = newShopItemList.sorted{ $0.createdTime < $1.createdTime }
         }
     }

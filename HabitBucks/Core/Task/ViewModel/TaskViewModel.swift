@@ -51,6 +51,18 @@ class TaskViewModel: ObservableObject {
         self.bonusStatus = true
     }
     
+    // MARK: for localization of bonus tasks
+    
+    func currentLanguage() -> String {
+        let rtn = UserDefaults.standard.stringArray(forKey: "AppleLanguages")?[0] ?? ""
+        if rtn.contains("zh-Hant") {
+            return "zh-Hant"
+        }
+        return rtn
+    }
+    
+    // MARK: Updates
+    
     func checkUpdate() {
         let currentDate = currentLocalTime()
         //print("cur date is \(currentDate)")
@@ -232,6 +244,7 @@ class TaskViewModel: ObservableObject {
     
     func updateBonus() async {
         self.bonusStatus = true
+        let lang = currentLanguage()
         // TODO: check error
         do {
             let userTaskDocRef = self.db.collection("user_tasks").document(self.uid)
@@ -245,7 +258,12 @@ class TaskViewModel: ObservableObject {
             await bonusDocRef.getDocument { (doc, error) in
                 if let doc = doc, doc.exists {
                     let bonusEmoji = doc.get("emoji") as? String ?? "❌"
-                    let bonusName = doc.get("name") as? String ?? "Error"
+                    var bonusName = ""
+                    if (lang == "zh-Hant") {
+                        bonusName = doc.get("ct_name") as? String ?? "Error"
+                    } else {
+                        bonusName = doc.get("name") as? String ?? "Error"
+                    }
                     //print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                     let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                     self.activeBonusTaskList = [bonus]
@@ -324,16 +342,29 @@ class TaskViewModel: ObservableObject {
     func createTasks() async {
         // creating tasks (once * 1, daily * 1, weekly * 1)
         var taskIdArray: [String] = []
+        let lang = currentLanguage()
         do {
-            let id1 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_ONCE_TASK)
-            let id2 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_DAILY_TASK)
-            let id3 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_WEEKLY_TASK)
-            taskIdArray.append(id1)
-            taskIdArray.append(id2)
-            taskIdArray.append(id3)
-            itemNameToId[TaskItem.DEFAULT_ONCE_TASK.name] = id1
-            itemNameToId[TaskItem.DEFAULT_DAILY_TASK.name] = id2
-            itemNameToId[TaskItem.DEFAULT_WEEKLY_TASK.name] = id3
+            if (lang == "zh-Hant") {
+                let id1 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_ONCE_TASK_ct)
+                let id2 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_DAILY_TASK_ct)
+                let id3 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_WEEKLY_TASK_ct)
+                taskIdArray.append(id1)
+                taskIdArray.append(id2)
+                taskIdArray.append(id3)
+                itemNameToId[TaskItem.DEFAULT_ONCE_TASK_ct.name] = id1
+                itemNameToId[TaskItem.DEFAULT_DAILY_TASK_ct.name] = id2
+                itemNameToId[TaskItem.DEFAULT_WEEKLY_TASK_ct.name] = id3
+            } else {
+                let id1 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_ONCE_TASK)
+                let id2 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_DAILY_TASK)
+                let id3 = try await storeTaskItemToFirestore(item: TaskItem.DEFAULT_WEEKLY_TASK)
+                taskIdArray.append(id1)
+                taskIdArray.append(id2)
+                taskIdArray.append(id3)
+                itemNameToId[TaskItem.DEFAULT_ONCE_TASK.name] = id1
+                itemNameToId[TaskItem.DEFAULT_DAILY_TASK.name] = id2
+                itemNameToId[TaskItem.DEFAULT_WEEKLY_TASK.name] = id3
+            }
         } catch {
             print("DEBUG: createTasks() failed, \(error.localizedDescription)")
         }
@@ -350,8 +381,13 @@ class TaskViewModel: ObservableObject {
         let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
         await bonusDocRef.getDocument { (doc, error) in
             if let doc = doc, doc.exists {
-                let bonusEmoji = doc.get("emoji") as? String ?? "❌"
-                let bonusName = doc.get("name") as? String ?? "Error"
+                let bonusEmoji = doc.get("emoji") as? String ?? "🔮"
+                var bonusName = ""
+                if (lang == "zh-Hant") {
+                    bonusName = doc.get("ct_name") as? String ?? "限定：玩一個心理測驗"
+                } else {
+                    bonusName = doc.get("name") as? String ?? "Bonus: Play a personality test"
+                }
                 //print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                 let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                 self.activeBonusTaskList = [bonus]
@@ -363,9 +399,15 @@ class TaskViewModel: ObservableObject {
             }
         }
         DispatchQueue.main.async {
-            self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK]
-            self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK]
-            self.activeWeeklyTaskList = [TaskItem.DEFAULT_WEEKLY_TASK]
+            if (lang == "zh-Hant") {
+                self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK_ct]
+                self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK_ct]
+                self.activeWeeklyTaskList = [TaskItem.DEFAULT_WEEKLY_TASK_ct]
+            } else {
+                self.activeOnceTaskList = [TaskItem.DEFAULT_ONCE_TASK]
+                self.activeDailyTaskList = [TaskItem.DEFAULT_DAILY_TASK]
+                self.activeWeeklyTaskList = [TaskItem.DEFAULT_WEEKLY_TASK]
+            }
             self.inactiveBonusTaskList = []
             self.inactiveDailyTaskList = []
             self.inactiveWeeklyTaskList = []
@@ -417,6 +459,7 @@ class TaskViewModel: ObservableObject {
                     // TODO: fetch bonus
                     // Bonus task
                     let bonusId = self.getBonusId()
+                    let lang = self.currentLanguage()
                     //print("bonus id is \(bonusId)")
                     let bonusDocRef = self.db.collection("bonus_tasks").document(bonusId)
                     bonusDocRef.getDocument { (doc, error) in
@@ -429,7 +472,12 @@ class TaskViewModel: ObservableObject {
                             let bonusStatus = document.get("bonus_status") as? Bool
                             self.bonusStatus = bonusStatus ?? true
                             let bonusEmoji = doc.get("emoji") as? String ?? "❌"
-                            let bonusName = doc.get("name") as? String ?? "Error"
+                            var bonusName = ""
+                            if (lang == "zh-Hant") {
+                                bonusName = doc.get("ct_name") as? String ?? "Error"
+                            } else {
+                                bonusName = doc.get("name") as? String ?? "Error"
+                            }
                             //print("successfully in bonus doc!, \(bonusEmoji) \(bonusName)")
                             let bonus = TaskItem(emoji: bonusEmoji, name: bonusName, reward: 10, type: "bonus", count_goal: 1, count_cur: 0, update: [false, false, false, false, false, false, false], view: [true, true, true, true, true, true, true])
                             if (bonusStatus ?? true) {

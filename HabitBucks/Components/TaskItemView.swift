@@ -44,9 +44,12 @@ struct TaskItemView: View {
             return "(\(item.count_cur)/\(item.count_goal))"
         }
     }
+    let lang = UserDefaults.standard.stringArray(forKey: "AppleLanguages")?[0] ?? ""
     var rewardCountText: String {
         if item.count_goal == 1 {
             return ""
+        } else if (lang.contains("zh-Hant")) {
+            return "/點擊"
         } else {
             return "/click"
         }
