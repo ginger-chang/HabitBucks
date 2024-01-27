@@ -34,7 +34,7 @@ struct AddTaskView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     InputView(
                         text: $emoji,
-                        title: "Emoji",
+                        title: LocalizedStringKey("Emoji"),
                         placeholder: "⌛️")
                     .onChange(of: emoji) { newValue in
                         // Limit to one character
@@ -44,7 +44,7 @@ struct AddTaskView: View {
                     }
                     InputView(
                         text: $name,
-                        title: "Name",
+                        title: LocalizedStringKey("Name"),
                         placeholder: "30 minute study session")
                     NumberInputView(
                         text: $reward, // convert this to int later

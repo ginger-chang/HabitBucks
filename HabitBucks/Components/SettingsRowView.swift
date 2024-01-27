@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SettingsRowView: View {
     let imageName: String
-    let title: String
+    let title: LocalizedStringKey
     let tintColor: Color
     var body: some View {
         HStack(spacing: 12) {

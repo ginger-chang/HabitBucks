@@ -10,6 +10,7 @@
 		D20CA7F82B2F531A00FFE005 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20CA7F72B2F531A00FFE005 /* TaskListView.swift */; };
 		D23EA3592B30265D00C9E436 /* DayInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23EA3582B30265D00C9E436 /* DayInputView.swift */; };
 		D23EA35B2B303A2900C9E436 /* RadioButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23EA35A2B303A2900C9E436 /* RadioButton.swift */; };
+		D286E1CE2B645E2F000E52BD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D286E1CD2B645E2F000E52BD /* Localizable.xcstrings */; };
 		D2C6D11D2B4E87C9005814E6 /* HowToUseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2C6D11C2B4E87C9005814E6 /* HowToUseView.swift */; };
 		D2DC077C2B1D8FA90038DBFC /* HabitBucksApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */; };
 		D2DC077E2B1D8FA90038DBFC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DC077D2B1D8FA90038DBFC /* ContentView.swift */; };
@@ -67,6 +68,7 @@
 		D20CA7F72B2F531A00FFE005 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		D23EA3582B30265D00C9E436 /* DayInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayInputView.swift; sourceTree = "<group>"; };
 		D23EA35A2B303A2900C9E436 /* RadioButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadioButton.swift; sourceTree = "<group>"; };
+		D286E1CD2B645E2F000E52BD /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		D2A943AA2B5019F200B187EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D2C6D11B2B4E43FA005814E6 /* HabitBucks.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HabitBucks.entitlements; sourceTree = "<group>"; };
 		D2C6D11C2B4E87C9005814E6 /* HowToUseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowToUseView.swift; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				D2DC077B2B1D8FA90038DBFC /* HabitBucksApp.swift */,
+				D286E1CD2B645E2F000E52BD /* Localizable.xcstrings */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -429,6 +432,8 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hant",
+				"zh-Hans",
 			);
 			mainGroup = D2DC076F2B1D8FA90038DBFC;
 			packageReferences = (
@@ -452,6 +457,7 @@
 			files = (
 				D2DC07832B1D8FAB0038DBFC /* Preview Assets.xcassets in Resources */,
 				D2DC07802B1D8FAB0038DBFC /* Assets.xcassets in Resources */,
+				D286E1CE2B645E2F000E52BD /* Localizable.xcstrings in Resources */,
 				D2DC07B92B1DA6410038DBFC /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

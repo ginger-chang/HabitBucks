@@ -15,7 +15,7 @@ enum DayOfWeek: String, CaseIterable, Identifiable {
 
 struct DayInputView: View {
     @Binding var selectedDays: [Bool]
-    let title: String
+    let title: LocalizedStringKey
     
     var body: some View {
         VStack(alignment: .leading) {

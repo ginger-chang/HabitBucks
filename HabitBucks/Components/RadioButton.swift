@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RadioButton: View {
-    var label: String
+    var label: LocalizedStringKey
     var groupBinding: Binding<String>
     var value: String
 

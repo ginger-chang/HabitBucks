@@ -43,7 +43,7 @@ struct LoginView: View {
                     InputView(
                         text: $email,
                         title: "Email Address",
-                        placeholder: "johndoe@example.com")
+                        placeholder: "john@example․com")
                         .autocapitalization(.none)
                     InputView(
                         text: $password,

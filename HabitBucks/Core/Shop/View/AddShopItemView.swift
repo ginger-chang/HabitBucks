@@ -26,8 +26,7 @@ struct AddShopItemView: View {
             VStack(spacing: 24) {
                 InputView(
                     text: $emoji,
-                    title: "Emoji",
-                    placeholder: "🍿")
+                    title: LocalizedStringKey("Emoji"), placeholder: "🍿")
                 .onChange(of: emoji) { newValue in
                     // Limit to one character
                     if newValue.count > 1 {
@@ -36,7 +35,7 @@ struct AddShopItemView: View {
                 }
                 InputView(
                     text: $name,
-                    title: "Name",
+                    title: LocalizedStringKey("Name"),
                     placeholder: "Movie Night")
                 NumberInputView(
                     text: $price, // convert this to int later
