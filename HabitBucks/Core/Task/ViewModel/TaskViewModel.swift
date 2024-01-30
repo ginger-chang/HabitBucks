@@ -704,25 +704,28 @@ class TaskViewModel: ObservableObject {
             }
         }
         // 2. update task_items
-        let itemId = itemNameToId[item.name]
-        //print("delete item id \(itemId)")
-        let docRef = db.collection("task_items").document(itemId ?? "")
-        docRef.delete { error in
-            if let error = error {
-                print("DEBUG: error deleting task item, \(error)")
+        if let itemId = itemNameToId[item.name] {
+            //print("delete item id \(itemId)")
+            let docRef = db.collection("task_items").document(itemId ?? "")
+            docRef.delete { error in
+                if let error = error {
+                    print("DEBUG: error deleting task item, \(error)")
+                }
             }
+            // 3. update user_tasks
+            let userTasksDocRef = db.collection("user_tasks").document(self.uid)
+            do {
+                try await userTasksDocRef.updateData([
+                    "task_item_list": FieldValue.arrayRemove([itemId])
+                ])
+            } catch {
+                print("DEBUG: error removing task item from user tasks list, \(error.localizedDescription)")
+            }
+            // 4. update itemNameToId
+            itemNameToId.removeValue(forKey: item.name)
+        } else {
+            print("DEBUG: no item name to id in delete task")
         }
-        // 3. update user_tasks
-        let userTasksDocRef = db.collection("user_tasks").document(self.uid)
-        do {
-            try await userTasksDocRef.updateData([
-                "task_item_list": FieldValue.arrayRemove([itemId])
-            ])
-        } catch {
-            print("DEBUG: error removing task item from user tasks list, \(error.localizedDescription)")
-        }
-        // 4. update itemNameToId
-        itemNameToId.removeValue(forKey: item.name)
     }
     
     func updateListEntry(oldItem: TaskItem, newItem: TaskItem) {

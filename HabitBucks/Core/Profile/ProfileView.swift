@@ -32,7 +32,7 @@ struct ProfileView: View {
                                             title: "Version",
                                             tintColor: Color(.systemGray))
                             Spacer()
-                            Text("1.1")
+                            Text("1.1.1")
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                         }

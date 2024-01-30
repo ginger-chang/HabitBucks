@@ -35,7 +35,7 @@ class ShopViewModel: ObservableObject {
     // do it like the way coin manager is set up (with another set subscription function - perhaps)
     init() {
         self.latestShopItem = ShopItem(name: "default", price: 0, emoji: "😀", createdTime: Date())
-        self.shopItemList = [ShopItem.MOCK_SHOP_ITEM_1, ShopItem.MOCK_SHOP_ITEM_2, ShopItem.MOCK_SHOP_ITEM_3, ShopItem.MOCK_SHOP_ITEM_4, ShopItem.MOCK_SHOP_ITEM_5, ShopItem.MOCK_SHOP_ITEM_6, ShopItem.MOCK_SHOP_ITEM_7]
+        self.shopItemList = []
         self.uid = ""
     }
     
@@ -240,23 +240,28 @@ class ShopViewModel: ObservableObject {
         shopItemList?.removeAll{ $0 == item }
         // 2nd step: get id of the shop_item from the dict
         let itemId = itemNameToId[item.name]
-        let docRef = Firestore.firestore().collection("shop_items").document(itemId ?? "")
-        docRef.delete { error in
-            if let error = error {
-                print("DEBUG: Error deleting shop item doc: \(error)")
+        if let itemId = itemNameToId[item.name] {
+            let docRef = Firestore.firestore().collection("shop_items").document(itemId ?? "")
+            docRef.delete { error in
+                if let error = error {
+                    print("DEBUG: Error deleting shop item doc: \(error)")
+                }
             }
+            // 3rd step: remove the id from user shop doc
+            let userShopDocRef = db.collection("user_shop").document(self.uid)
+            do {
+                try await userShopDocRef.updateData([
+                  "shop_item_list": FieldValue.arrayRemove([itemId])
+                ])
+            } catch {
+                print("DEBUG: error when removing item id from user shop doc \(error.localizedDescription)")
+            }
+            // 4th step: remove name from itemNameToId
+            itemNameToId.removeValue(forKey: item.name)
+        } else {
+            // item name/id doesn't exist
+            print("DEBUG: shop item name/id doesn't exist when deleting")
         }
-        // 3rd step: remove the id from user shop doc
-        let userShopDocRef = db.collection("user_shop").document(self.uid)
-        do {
-            try await userShopDocRef.updateData([
-              "shop_item_list": FieldValue.arrayRemove([itemId])
-            ])
-        } catch {
-            print("DEBUG: error when removing item id from user shop doc \(error.localizedDescription)")
-        }
-        // 4th step: remove name from itemNameToId
-        itemNameToId.removeValue(forKey: item.name)
     }
     
     // helper alert construction functions
